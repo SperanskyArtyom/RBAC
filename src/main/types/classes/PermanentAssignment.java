@@ -12,7 +12,7 @@ public class PermanentAssignment extends AbstractRoleAssignment{
 
     @Override
     public boolean isActive() {
-        return true;
+        return !revoked;
     }
 
     @Override
