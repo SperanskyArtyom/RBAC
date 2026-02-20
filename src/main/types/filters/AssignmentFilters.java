@@ -1,5 +1,7 @@
-package types.classes;
+package types.filters;
 
+import types.classes.Role;
+import types.classes.TemporaryAssignment;
 import types.interfaces.RoleAssignment;
 import types.interfaces.functional.AssignmentFilter;
 import types.records.User;

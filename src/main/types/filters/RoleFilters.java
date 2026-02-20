@@ -1,4 +1,4 @@
-package types.classes;
+package types.filters;
 
 import types.interfaces.functional.RoleFilter;
 import types.records.Permission;
