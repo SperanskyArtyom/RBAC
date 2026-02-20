@@ -3,7 +3,7 @@ package types.classes;
 import types.records.AssignmentMetadata;
 import types.records.User;
 
-public class PermanentAssignment extends AbstractRoleAssignment{
+public class PermanentAssignment extends AbstractRoleAssignment {
     private boolean revoked = false;
 
     public PermanentAssignment(User user, Role role, AssignmentMetadata metadata) {

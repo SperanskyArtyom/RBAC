@@ -11,20 +11,17 @@ public class Role {
     private final Set<Permission> permissions;
 
     public Role(String name, String description) {
-
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Name must not be null or blank");
         }
-
         if (description == null || description.isBlank()) {
             throw new IllegalArgumentException("Description must not be null or blank");
         }
 
         this.name = name;
         this.description = description;
-
-        id = "role_" + UUID.randomUUID();
-        permissions = new HashSet<>();
+        this.id = "role_" + UUID.randomUUID();
+        this.permissions = new HashSet<>();
     }
 
     public void addPermission(Permission permission) {
@@ -44,9 +41,8 @@ public class Role {
     }
 
     public boolean hasPermission(String permissionName, String resource) {
-        return permissions.stream().anyMatch(
-                permission -> permission.matches(permissionName, resource)
-        );
+        return permissions.stream()
+                .anyMatch(permission -> permission.matches(permissionName, resource));
     }
 
     public Set<Permission> getPermissions() {
@@ -64,9 +60,7 @@ public class Role {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-
         if (!(o instanceof Role role)) return false;
-
         return Objects.equals(id, role.id);
     }
 
@@ -82,13 +76,13 @@ public class Role {
     }
 
     public String format() {
-        StringBuilder result = new StringBuilder("Role: " + name + "[ID: " + id + "]\n"
-                + "Description: " + description + "\n"
-                + "Permissions (" + permissions.size() + "):\n");
+        StringBuilder result = new StringBuilder();
+        result.append(String.format("Role: %s [ID: %s]%n", name, id));
+        result.append(String.format("Description: %s%n", description));
+        result.append(String.format("Permissions (%d):%n", permissions.size()));
 
-        for (var permission : permissions) {
-            result.append("\t- ").append(permission.format()).append("\n");
-        }
+        permissions.forEach(permission ->
+                result.append(String.format("\t- %s%n", permission.format())));
 
         return result.toString();
     }

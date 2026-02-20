@@ -8,21 +8,28 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-public class TemporaryAssignment extends AbstractRoleAssignment{
-    private String expiresAt;
+public class TemporaryAssignment extends AbstractRoleAssignment {
     private final boolean autoRenew;
+    private String expiresAt;
 
-    public TemporaryAssignment(User user, Role role, AssignmentMetadata metadata, String expiresAt, boolean autoRenew) {
+    public TemporaryAssignment(
+            User user,
+            Role role,
+            AssignmentMetadata metadata,
+            String expiresAt,
+            boolean autoRenew) {
+        validateDate(expiresAt);
         super(user, role, metadata);
+        this.expiresAt = expiresAt;
+        this.autoRenew = autoRenew;
+    }
 
+    private static void validateDate(String date) {
         try {
-            OffsetDateTime.parse(expiresAt, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+            OffsetDateTime.parse(date, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         } catch (DateTimeParseException e) {
             throw new IllegalArgumentException("expiresAt must be ISO offset format");
         }
-
-        this.expiresAt = expiresAt;
-        this.autoRenew = autoRenew;
     }
 
     @Override
@@ -36,29 +43,25 @@ public class TemporaryAssignment extends AbstractRoleAssignment{
     }
 
     public void extend(String newExpirationDate) {
-        try {
-            OffsetDateTime.parse(newExpirationDate, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("expiresAt must be ISO offset format");
-        }
-
+        validateDate(newExpirationDate);
         expiresAt = newExpirationDate;
     }
 
+    private OffsetDateTime getExpiresAtDateTime() {
+        return OffsetDateTime.parse(expiresAt,
+                DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    }
+
     public boolean isExpired() {
-        return OffsetDateTime.now().isAfter(OffsetDateTime.parse(expiresAt,
-                DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+        return OffsetDateTime.now().isAfter(getExpiresAtDateTime());
     }
 
     public boolean isExpired(OffsetDateTime now) {
-        return now.isAfter(OffsetDateTime.parse(expiresAt, DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+        return now.isAfter(getExpiresAtDateTime());
     }
 
     public String getTimeRemaining() {
-        OffsetDateTime expiresAtDateTime = OffsetDateTime.parse(expiresAt,
-                DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-
-        Duration duration = Duration.between(OffsetDateTime.now(), expiresAtDateTime);
+        Duration duration = Duration.between(OffsetDateTime.now(), getExpiresAtDateTime());
 
         if (duration.isNegative() || duration.isZero()) {
             return "Expired";
@@ -69,12 +72,14 @@ public class TemporaryAssignment extends AbstractRoleAssignment{
         long minutes = duration.toMinutes() % 60;
         long seconds = duration.getSeconds() % 60;
 
-        return String.format("%d days %d hours %d minutes %d seconds", days, hours, minutes, seconds);
+        return String.format(
+                "%d days %d hours %d minutes %d seconds",
+                days, hours, minutes, seconds);
     }
 
     @Override
     public String summary() {
-        return String.format("%sRemaining time: %s%n", super.summary(), getTimeRemaining());
+        return String.format("%sRemaining time: %s%n",
+                super.summary(), getTimeRemaining());
     }
-
 }
