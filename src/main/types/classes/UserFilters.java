@@ -2,7 +2,11 @@ package types.classes;
 
 import types.interfaces.functional.UserFilter;
 
-public class UserFilters {
+public final class UserFilters {
+
+    private UserFilters() {
+        throw new AssertionError("Utility class");
+    }
 
     public static UserFilter byUsername(String username) {
         return user -> user.username().equals(username);

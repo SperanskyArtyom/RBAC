@@ -3,7 +3,11 @@ package types.classes;
 import types.interfaces.functional.RoleFilter;
 import types.records.Permission;
 
-public class RoleFilters {
+public final class RoleFilters {
+
+    private RoleFilters() {
+        throw new AssertionError("Utility class");
+    }
 
     public static RoleFilter byName(String name) {
         return role -> role.getName().equals(name);
