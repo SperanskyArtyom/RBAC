@@ -23,7 +23,7 @@ public record AssignmentMetadata(String assignedBy, String assignedAt, String re
         try {
             OffsetDateTime.parse(assignedAt, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         } catch (DateTimeParseException e) {
-          throw new IllegalArgumentException("assignedAt must be ISO offset format");
+            throw new IllegalArgumentException("assignedAt must be ISO offset format");
         }
     }
 
@@ -36,7 +36,9 @@ public record AssignmentMetadata(String assignedBy, String assignedAt, String re
 
     public String format() {
         StringBuilder result = new StringBuilder();
-        result.append(String.format("Assigned Metadata: by - %s, at - %s", assignedBy, assignedAt));
+        result.append(String.format(
+                "Assigned Metadata: by - %s, at - %s",
+                assignedBy, assignedAt));
 
         if (reason != null)
             result.append(String.format(", reason - %s", reason));

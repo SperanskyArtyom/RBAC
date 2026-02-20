@@ -1,7 +1,8 @@
 package types.classes;
 
 import types.interfaces.RoleAssignment;
-import types.records.*;
+import types.records.AssignmentMetadata;
+import types.records.User;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -13,7 +14,7 @@ public abstract class AbstractRoleAssignment implements RoleAssignment {
     private final AssignmentMetadata metadata;
 
     public AbstractRoleAssignment(User user, Role role, AssignmentMetadata metadata) {
-        assignmentId = "assignment_" + UUID.randomUUID();
+        this.assignmentId = "assignment_" + UUID.randomUUID();
         this.user = user;
         this.role = role;
         this.metadata = metadata;
@@ -54,15 +55,17 @@ public abstract class AbstractRoleAssignment implements RoleAssignment {
     }
 
     public String summary() {
-
-        return String.format("[%s] %s assigned to %s by %s at %s\n",
-                assignmentType(), role.getName(), user.username(),
-                metadata.assignedBy(), metadata.assignedAt()) +
-                String.format("Reason: %s\n", metadata.reason() == null
-                        ? "Not specified"
-                        : metadata.reason()) +
-                String.format("Status: %s\n", isActive()
-                        ? "ACTIVE"
-                        : "INACTIVE");
+        return String.format(
+                "[%s] %s assigned to %s by %s at %s%n" +
+                        "Reason: %s%n" +
+                        "Status: %s%n",
+                assignmentType(),
+                role.getName(),
+                user.username(),
+                metadata.assignedBy(),
+                metadata.assignedAt(),
+                metadata.reason() == null ? "Not specified" : metadata.reason(),
+                isActive() ? "ACTIVE" : "INACTIVE"
+        );
     }
 }

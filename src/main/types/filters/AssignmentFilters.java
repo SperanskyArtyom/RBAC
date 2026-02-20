@@ -16,19 +16,23 @@ public final class AssignmentFilters {
     }
 
     public static AssignmentFilter byUser(User user) {
-        return assignment -> assignment.user().equals(user);
+        return assignment ->
+                assignment.user().equals(user);
     }
 
     public static AssignmentFilter byUsername(String username) {
-        return assignment -> assignment.user().username().equals(username);
+        return assignment ->
+                assignment.user().username().equals(username);
     }
 
     public static AssignmentFilter byRole(Role role) {
-        return assignment -> assignment.role().equals(role);
+        return assignment ->
+                assignment.role().equals(role);
     }
 
     public static AssignmentFilter byRoleName(String roleName) {
-        return assignment -> assignment.role().getName().equals(roleName);
+        return assignment ->
+                assignment.role().getName().equals(roleName);
     }
 
     public static AssignmentFilter activeOnly() {
@@ -36,28 +40,35 @@ public final class AssignmentFilters {
     }
 
     public static AssignmentFilter inactiveOnly() {
-        return assignment -> !assignment.isActive();
+        return assignment ->
+                !assignment.isActive();
     }
 
     public static AssignmentFilter byType(String type) {
-        return assignment -> assignment.assignmentType().equals(type);
+        return assignment ->
+                assignment.assignmentType().equals(type);
     }
 
     public static AssignmentFilter assignedBy(String username) {
-        return assignment -> assignment.metadata().assignedBy().equals(username);
+        return assignment ->
+                assignment.metadata().assignedBy().equals(username);
     }
 
     public static AssignmentFilter assignedAfter(String date) {
-        OffsetDateTime offsetDateTime = OffsetDateTime.parse(date,
-                DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-        return assignment -> OffsetDateTime.parse(assignment.metadata().assignedAt(),
-                DateTimeFormatter.ISO_OFFSET_DATE_TIME).isAfter(offsetDateTime);
+        OffsetDateTime offsetDateTime = parseDate(date);
+        return assignment ->
+                parseDate(assignment.metadata().assignedAt()).isAfter(offsetDateTime);
     }
 
     public static AssignmentFilter expiringBefore(String date) {
-        OffsetDateTime offsetDateTime = OffsetDateTime.parse(date,
+        OffsetDateTime offsetDateTime = parseDate(date);
+        return assignment ->
+                assignment instanceof TemporaryAssignment temporaryAssignment
+                        && temporaryAssignment.isExpired(offsetDateTime);
+    }
+
+    private static OffsetDateTime parseDate(String date) {
+        return OffsetDateTime.parse(date,
                 DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-        return assignment -> assignment instanceof TemporaryAssignment temporaryAssignment
-                && temporaryAssignment.isExpired(offsetDateTime);
     }
 }
