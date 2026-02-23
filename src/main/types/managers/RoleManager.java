@@ -23,10 +23,17 @@ public class RoleManager implements Repository<Role> {
 
     @Override
     public boolean remove(Role item) {
+        if (assignmentManager == null) {
+            throw new IllegalStateException("AssignmentManager is not initialized");
+        }
         if (item == null) return false;
-        Optional<Role> role = findById(item.getId());
-        if (role.isEmpty()) return false;
-        // TODO check if role is assigned to any user
+        if (!rolesById.containsKey(item.getId())) return false;
+        if (assignmentManager.getActiveAssignments().stream()
+                .anyMatch(assignment ->
+                        assignment.role().equals(item))) {
+            throw new IllegalArgumentException(
+                    "You can't remove role that is assigned to at least one user");
+        }
         rolesById.remove(item.getId());
         rolesByName.remove(item.getName());
         return true;
