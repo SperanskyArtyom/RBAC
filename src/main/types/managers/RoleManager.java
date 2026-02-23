@@ -9,6 +9,7 @@ import java.util.*;
 public class RoleManager implements Repository<Role> {
     private final Map<String, Role> rolesById = new HashMap<>();
     private final Map<String, Role> rolesByName = new HashMap<>();
+    private AssignmentManager assignmentManager;
 
     @Override
     public void add(Role item) {
@@ -102,5 +103,9 @@ public class RoleManager implements Repository<Role> {
         return rolesById.values().stream()
                 .filter(role -> role.hasPermission(permissionName, resource))
                 .toList();
+    }
+
+    public void setAssignmentManager(AssignmentManager assignmentManager) {
+        this.assignmentManager = assignmentManager;
     }
 }
