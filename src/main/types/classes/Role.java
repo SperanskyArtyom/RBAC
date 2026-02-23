@@ -49,6 +49,10 @@ public class Role {
         return Collections.unmodifiableSet(permissions);
     }
 
+    public String getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
