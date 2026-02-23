@@ -44,18 +44,10 @@ public class UserManager implements Repository<User> {
     }
 
     public Optional<User> findByUsername(String username) {
-        if (username == null || username.isBlank()) {
-            throw new IllegalArgumentException("Username must not be null or blank");
-        }
-
         return Optional.ofNullable(users.get(username));
     }
 
     public Optional<User> findByEmail(String email) {
-        if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException("Email must not be null or blank");
-        }
-
         return users.values().stream()
                 .filter(user -> user.email().equals(email))
                 .findFirst();
