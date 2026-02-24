@@ -112,7 +112,7 @@ public class RoleManager implements Repository<Role> {
                 .toList();
     }
 
-    public void setAssignmentManager(AssignmentManager assignmentManager) {
+    void setAssignmentManager(AssignmentManager assignmentManager) {
         this.assignmentManager = assignmentManager;
     }
 }
