@@ -26,8 +26,8 @@ public class CommandParser {
         commandDescriptions.put(name, description);
     }
 
-    private void executeCommand(String commandName, Scanner scanner, RBACSystem system) {
-        commands.get(commandName).execute(scanner, system);
+    private void executeCommand(String commandName, Scanner scanner, RBACSystem system, boolean haveArgs) {
+        commands.get(commandName).execute(scanner, system, haveArgs);
     }
 
     public void parseAndExecute(String input, Scanner scanner, RBACSystem system) {
@@ -43,10 +43,10 @@ public class CommandParser {
 
         if (parts.length == 2) {
             try (Scanner argsScanner = new Scanner(parts[1])) {
-                executeCommand(commandName, argsScanner, system);
+                executeCommand(commandName, argsScanner, system, true);
             }
         } else {
-            executeCommand(commandName, scanner, system);
+            executeCommand(commandName, scanner, system, false);
         }
     }
 

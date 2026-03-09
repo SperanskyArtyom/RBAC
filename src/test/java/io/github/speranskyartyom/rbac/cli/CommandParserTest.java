@@ -112,13 +112,13 @@ class CommandParserTest {
 
         parser.parseAndExecute("test", originalScanner, mockSystem);
 
-        verify(mockCommand, times(1)).execute(originalScanner, mockSystem);
+        verify(mockCommand, times(1)).execute(originalScanner, mockSystem, false);
     }
 
     @Test
     @DisplayName("Should execute command with arguments using scanner created from args")
     void shouldExecuteCommandWithArgs() {
-        Command testCommand = (scanner, _) -> {
+        Command testCommand = (scanner, _, _) -> {
             assertEquals("arg1", scanner.next());
             assertEquals("arg2", scanner.next());
             assertFalse(scanner.hasNext());
