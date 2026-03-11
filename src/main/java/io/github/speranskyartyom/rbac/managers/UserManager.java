@@ -83,7 +83,7 @@ public class UserManager implements Repository<User> {
 
     public void update(String username, String newFullName, String newEmail) {
         if (!exists(username)) {
-            throw new IllegalArgumentException("User with username - " + username + " doesn't exists");
+            throw new IllegalArgumentException("User with username - " + username + " doesn't exist");
         }
         users.replace(username, new User(username, newFullName, newEmail));
     }
