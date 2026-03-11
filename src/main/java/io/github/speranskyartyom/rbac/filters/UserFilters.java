@@ -23,6 +23,11 @@ public final class UserFilters {
                 user.email().equals(email);
     }
 
+    public static UserFilter byEmailContains(String email) {
+        return user ->
+                user.email().toLowerCase().contains(email.toLowerCase());
+    }
+
     public static UserFilter byEmailDomain(String domain) {
         return user ->
                 user.email().endsWith(domain);
