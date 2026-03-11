@@ -30,7 +30,7 @@ public final class UserFilters {
 
     public static UserFilter byEmailDomain(String domain) {
         return user ->
-                user.email().endsWith(domain);
+                user.email().split("@")[1].equals(domain);
     }
 
     public static UserFilter byFullNameContains(String substring) {
