@@ -85,8 +85,11 @@ public class Role {
         result.append(String.format("Description: %s%n", description));
         result.append(String.format("Permissions (%d):%n", permissions.size()));
 
-        permissions.forEach(permission ->
-                result.append(String.format("\t- %s%n", permission.format())));
+        permissions.stream()
+                .sorted(Comparator.comparing(Permission::resource)
+                        .thenComparing(Permission::name))
+                .forEach(permission ->
+                        result.append(String.format("\t- %s%n", permission.format())));
 
         return result.toString();
     }
