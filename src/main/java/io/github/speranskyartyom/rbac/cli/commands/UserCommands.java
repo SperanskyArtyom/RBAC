@@ -9,10 +9,7 @@ import io.github.speranskyartyom.rbac.managers.UserManager;
 import io.github.speranskyartyom.rbac.models.Role;
 import io.github.speranskyartyom.rbac.models.records.User;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class UserCommands {
@@ -80,21 +77,12 @@ public class UserCommands {
     }
 
     private static Command userListCommand() {
-        return ((scanner, system, haveArgs) -> {
-            UserManager manager = system.getUserManager();
-            List<User> users;
-
-            if (!haveArgs) {
-                users = manager.findAll();
-                printUserTable(users);
-                return;
-            }
-
+        return ((_, system, args) -> {
             UserFilter filter = null;
 
-            while (scanner.hasNext()) {
-                String arg = scanner.next();
+            for (String arg : args) {
                 String[] tokens = arg.split("=", 2);
+
                 if (tokens.length != 2) {
                     System.out.println("Invalid filter format: " + arg + ". Expected key=value");
                     return;
@@ -119,65 +107,51 @@ public class UserCommands {
                         return;
                     }
                 }
+
                 filter = filter == null ? currentFilter : filter.and(currentFilter);
             }
+
+            UserManager manager = system.getUserManager();
+            List<User> users;
+
             if (filter == null) {
                 users = manager.findAll();
-                printUserTable(users);
-                return;
+            } else {
+                users = manager.findByFilter(filter);
             }
-            users = manager.findByFilter(filter);
+
             printUserTable(users);
         });
     }
 
     private static Command userCreateCommand() {
-        return ((scanner, system, haveArgs) -> {
+        return ((scanner, system, args) -> {
             String username, fullName, email;
 
-            if (!haveArgs) {
+            if (args.length < 1) {
                 System.out.print("Enter username: ");
                 username = scanner.nextLine();
+            } else {
+                username = args[0];
+            }
+
+            if (args.length < 2) {
                 System.out.print("Enter full name: ");
                 fullName = scanner.nextLine();
+            } else {
+                fullName = args[1];
+            }
+
+            if (args.length < 3) {
                 System.out.print("Enter email: ");
                 email = scanner.nextLine();
             } else {
-                if (!scanner.hasNext()) {
-                    System.out.println("Error: missing username, full name and email");
-                    return;
-                }
-                username = scanner.next();
-                if (!scanner.hasNextLine()) {
-                    System.out.println("Error: missing fullName and email");
-                    return;
-                }
-                String rest = scanner.nextLine().trim();
+                email = args[2];
+            }
 
-                if (rest.startsWith("\"")) {
-                    int closingQuote = rest.indexOf("\"", 1);
-                    if (closingQuote == -1) {
-                        System.out.println("Error: missing closing quote for fullName");
-                        return;
-                    }
-                    fullName = rest.substring(1, closingQuote);
-
-                    scanner = new Scanner(rest.substring(closingQuote + 1).trim());
-                } else {
-                    scanner = new Scanner(rest);
-                    fullName = scanner.next();
-                }
-
-                if (!scanner.hasNext()) {
-                    System.out.println("Error: missing email");
-                    return;
-                }
-                email = scanner.next();
-
-                if (scanner.hasNext()) {
-                    String extra = scanner.nextLine();
-                    System.out.println("Warning: extra arguments ignored: " + extra);
-                }
+            if (args.length > 3) {
+                String extra = String.join(" ", Arrays.copyOfRange(args, 3, args.length));
+                System.out.println("Warning: extra arguments ignored: " + extra);
             }
 
             try {
@@ -190,13 +164,19 @@ public class UserCommands {
     }
 
     private static Command userViewCommand() {
-        return ((scanner, system, haveArgs) -> {
-            if (!haveArgs) {
+        return ((scanner, system, args) -> {
+            String username;
+
+            if (args.length < 1) {
                 System.out.print("Enter username: ");
+                username = scanner.nextLine();
+            } else {
+                username = args[0];
             }
-            String username = scanner.next();
-            if (haveArgs && scanner.hasNext()) {
-                System.out.println("Warning: extra arguments ignored: " + scanner.nextLine());
+
+            if (args.length > 1) {
+                String extra = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+                System.out.println("Warning: extra arguments ignored: " + extra);
             }
 
             Optional<User> userOpt = system.getUserManager().findByUsername(username);
@@ -211,6 +191,7 @@ public class UserCommands {
                     .collect(Collectors.toSet());
 
             System.out.println(user.format());
+
             if (roles.isEmpty()) {
                 System.out.println("User don't have any role or permission.");
             } else {
@@ -222,52 +203,33 @@ public class UserCommands {
     }
 
     private static Command userUpdateCommand() {
-        return ((scanner, system, haveArgs) -> {
+        return ((scanner, system, args) -> {
             String username, fullName, email;
 
-            if (!haveArgs) {
+            if (args.length < 1) {
                 System.out.print("Enter username to update: ");
                 username = scanner.nextLine();
+            } else {
+                username = args[0];
+            }
+
+            if (args.length < 2) {
                 System.out.print("Enter new full name: ");
                 fullName = scanner.nextLine();
+            } else {
+                fullName = args[1];
+            }
+
+            if (args.length < 3) {
                 System.out.print("Enter new email: ");
                 email = scanner.nextLine();
             } else {
-                if (!scanner.hasNext()) {
-                    System.out.println("Error: missing username, full name and email");
-                    return;
-                }
-                username = scanner.next();
-                if (!scanner.hasNextLine()) {
-                    System.out.println("Error: missing fullName and email");
-                    return;
-                }
-                String rest = scanner.nextLine().trim();
+                email = args[2];
+            }
 
-                if (rest.startsWith("\"")) {
-                    int closingQuote = rest.indexOf("\"", 1);
-                    if (closingQuote == -1) {
-                        System.out.println("Error: missing closing quote for fullName");
-                        return;
-                    }
-                    fullName = rest.substring(1, closingQuote);
-
-                    scanner = new Scanner(rest.substring(closingQuote + 1).trim());
-                } else {
-                    scanner = new Scanner(rest);
-                    fullName = scanner.next();
-                }
-
-                if (!scanner.hasNext()) {
-                    System.out.println("Error: missing email");
-                    return;
-                }
-                email = scanner.next();
-
-                if (scanner.hasNext()) {
-                    String extra = scanner.nextLine();
-                    System.out.println("Warning: extra arguments ignored: " + extra);
-                }
+            if (args.length > 3) {
+                String extra = String.join(" ", Arrays.copyOfRange(args, 3, args.length));
+                System.out.println("Warning: extra arguments ignored: " + extra);
             }
 
             try {
@@ -280,28 +242,49 @@ public class UserCommands {
     }
 
     private static Command userDeleteCommand() {
-        return ((scanner, system, haveArgs) -> {
-            if (!haveArgs) {
+        return ((scanner, system, args) -> {
+            String username;
+
+            if (args.length < 1) {
                 System.out.print("Enter username to delete: ");
+                username = scanner.nextLine();
+            } else {
+                username = args[0];
             }
-            String username = scanner.next();
 
             if (username.equals(system.getCurrentUser())) {
                 System.out.println("Error: you can not delete yourself.");
                 return;
             }
 
-            if (!haveArgs) {
-                System.out.printf("Delete user %s? (y/n): ", username);
-                if (!scanner.next().equalsIgnoreCase("yes") &&
-                        !scanner.next().equalsIgnoreCase("y")) {
-                    System.out.println("Deletion cancelled.");
-                    return;
+            boolean isConfirmed = false;
+
+            if (args.length > 1) {
+                if (args[1].equals("-y")) {
+                    isConfirmed = true;
+                    if (args.length > 2) {
+                        String extra = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
+                        System.out.println("Warning: extra arguments ignored: " + extra);
+                    }
+                } else {
+                    String extra = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+                    System.out.println("Warning: extra arguments ignored: " + extra);
                 }
-            } else {
-                if (!scanner.hasNext() || !scanner.next().equals("-y")) {
-                    System.out.println("Deletion cancelled.\nUse -y flag to delete without confirmation.");
-                    return;
+            }
+
+            if (!isConfirmed) {
+                while (true) {
+                    System.out.printf("Delete user %s? (y/n): ", username);
+                    String answer = scanner.nextLine().toLowerCase();
+
+                    if (answer.equals("yes") || answer.equals("y")) {
+                        break;
+                    } else if (answer.equals("no") || answer.equals("n")) {
+                        System.out.println("Deletion cancelled.");
+                        return;
+                    }
+
+                    System.out.println("Invalid option. Type \"yes\" to confirm or \"no\" to cancel deletion.");
                 }
             }
 
@@ -310,6 +293,7 @@ public class UserCommands {
                 System.out.println("Error: no such user.");
                 return;
             }
+
             User user = userOpt.get();
             List<RoleAssignment> assignments = system.getAssignmentManager().findByUser(user);
             assignments.forEach(roleAssignment ->
@@ -325,12 +309,11 @@ public class UserCommands {
     }
 
     private static Command userSearchCommand() {
-        return ((scanner, system, haveArgs) -> {
-            if (haveArgs) {
-                userListCommand().execute(scanner, system, true);
+        return ((scanner, system, args) -> {
+            if (args.length > 0) {
+                userListCommand().execute(scanner, system, args);
                 return;
             }
-            StringBuilder sb = new StringBuilder();
 
             System.out.print("""
                     Choose filters:
@@ -340,26 +323,31 @@ public class UserCommands {
                     fullname - by full name (contains)
                     """);
 
+            List<String> argList = new ArrayList<>();
+
             while (true) {
+                StringBuilder sb = new StringBuilder();
                 System.out.println("Enter a filter or type \"search\"");
                 String option = scanner.nextLine();
+
                 switch (option) {
                     case "username", "email", "domain", "fullname" -> {
                         sb.append(option);
                         sb.append("=");
                         System.out.print(option + "=");
                         sb.append(scanner.nextLine());
-                        sb.append(" ");
+                        argList.add(sb.toString());
                     }
                     case "search" -> {
+                        args = argList.toArray(new String[0]);
                         userListCommand().execute(
-                                new Scanner(sb.toString().trim()),
+                                scanner,
                                 system,
-                                true
+                                args
                         );
                         return;
                     }
-                    default -> System.out.println("Invalid option.");
+                    default -> System.out.println("Invalid option. Try again.");
                 }
             }
         });

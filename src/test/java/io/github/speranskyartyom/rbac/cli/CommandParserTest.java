@@ -104,7 +104,7 @@ class CommandParserTest {
     }
 
     @Test
-    @DisplayName("Should execute command without arguments using original scanner")
+    @DisplayName("Should execute command without arguments")
     void shouldExecuteCommandWithoutArgs() {
         Command mockCommand = mock(Command.class);
         parser.registerCommand("test", "desc", mockCommand);
@@ -112,21 +112,21 @@ class CommandParserTest {
 
         parser.parseAndExecute("test", originalScanner, mockSystem);
 
-        verify(mockCommand, times(1)).execute(originalScanner, mockSystem, false);
+        verify(mockCommand, times(1)).execute(originalScanner, mockSystem, new String[0]);
     }
 
     @Test
-    @DisplayName("Should execute command with arguments using scanner created from args")
+    @DisplayName("Should execute command with arguments")
     void shouldExecuteCommandWithArgs() {
-        Command testCommand = (scanner, _, _) -> {
-            assertEquals("arg1", scanner.next());
-            assertEquals("arg2", scanner.next());
-            assertFalse(scanner.hasNext());
+        Command testCommand = (_, _, args) -> {
+            assertEquals("arg1", args[0]);
+            assertEquals("arg2", args[1]);
+            assertEquals(2, args.length);
         };
         parser.registerCommand("test", "desc", testCommand);
-        Scanner originalScanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
 
-        parser.parseAndExecute("test arg1 arg2", originalScanner, mockSystem);
+        parser.parseAndExecute("test arg1 arg2", scanner, mockSystem);
     }
 
     @Test

@@ -3,13 +3,33 @@ package io.github.speranskyartyom.rbac.cli;
 import io.github.speranskyartyom.rbac.core.RBACSystem;
 import io.github.speranskyartyom.rbac.interfaces.functional.Command;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class CommandParser {
     private final Map<String, Command> commands = new HashMap<>();
     private final Map<String, String> commandDescriptions = new HashMap<>();
+
+    private static String getArg(Scanner argLine) {
+        String token = argLine.next();
+        if (token.startsWith("\"")) {
+            StringBuilder sb = new StringBuilder(token);
+            if (token.length() == 1) {
+                if (!argLine.hasNext()) {
+                    throw new RuntimeException("Closing quote missed: " + sb);
+                }
+                token = argLine.next();
+            }
+            while (!token.endsWith("\"")) {
+                if (!argLine.hasNext()) {
+                    throw new RuntimeException("Closing quote missed: " + sb);
+                }
+                token = argLine.next();
+                sb.append(" ").append(token);
+            }
+            token = sb.substring(1, sb.length() - 1);
+        }
+        return token;
+    }
 
     public void registerCommand(String name, String description, Command command) {
         if (name == null || name.isBlank()) {
@@ -26,8 +46,8 @@ public class CommandParser {
         commandDescriptions.put(name, description);
     }
 
-    private void executeCommand(String commandName, Scanner scanner, RBACSystem system, boolean haveArgs) {
-        commands.get(commandName).execute(scanner, system, haveArgs);
+    private void executeCommand(String commandName, Scanner scanner, RBACSystem system, String[] args) {
+        commands.get(commandName).execute(scanner, system, args);
     }
 
     public void parseAndExecute(String input, Scanner scanner, RBACSystem system) {
@@ -41,13 +61,21 @@ public class CommandParser {
             return;
         }
 
+        List<String> argList = new ArrayList<>();
         if (parts.length == 2) {
-            try (Scanner argsScanner = new Scanner(parts[1])) {
-                executeCommand(commandName, argsScanner, system, true);
+            Scanner argsParser = new Scanner(parts[1]);
+            while (argsParser.hasNext()) {
+                try {
+                    argList.add(getArg(argsParser));
+                } catch (Exception e) {
+                    System.out.println("Error: " + e.getMessage());
+                    return;
+                }
             }
-        } else {
-            executeCommand(commandName, scanner, system, false);
         }
+        String[] args = argList.toArray(new String[0]);
+
+        executeCommand(commandName, scanner, system, args);
     }
 
     public void printHelp() {
