@@ -60,6 +60,27 @@ public class RoleManager implements Repository<Role> {
         rolesByName.clear();
     }
 
+    public void update(String name, String newName, String newDescription) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Name can not be null or blank");
+        }
+
+        if (!exists(name)) {
+            throw new IllegalArgumentException("Role \"" + name + "\" not in registry");
+        }
+
+        if (!newDescription.isBlank()) {
+            rolesByName.get(name).setDescription(newDescription);
+        }
+
+        if (!newName.isBlank()) {
+            Role role = rolesByName.get(name);
+            rolesByName.remove(name);
+            role.setName(newName);
+            rolesByName.put(role.getName(), role);
+        }
+    }
+
     public Optional<Role> findByName(String name) {
         return Optional.ofNullable(rolesByName.get(name));
     }

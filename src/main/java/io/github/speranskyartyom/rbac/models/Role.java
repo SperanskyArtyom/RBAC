@@ -6,20 +6,13 @@ import java.util.*;
 
 public class Role {
     private final String id;
-    private final String name;
-    private final String description;
     private final Set<Permission> permissions;
+    private String name;
+    private String description;
 
     public Role(String name, String description) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Name must not be null or blank");
-        }
-        if (description == null || description.isBlank()) {
-            throw new IllegalArgumentException("Description must not be null or blank");
-        }
-
-        this.name = name;
-        this.description = description;
+        setName(name);
+        setDescription(description);
         this.id = "role_" + UUID.randomUUID();
         this.permissions = new HashSet<>();
     }
@@ -57,8 +50,22 @@ public class Role {
         return name;
     }
 
+    public void setName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Name must not be null or blank");
+        }
+        this.name = name;
+    }
+
     public String getDescription() {
         return description;
+    }
+
+    public void setDescription(String description) {
+        if (description == null || description.isBlank()) {
+            throw new IllegalArgumentException("Description must not be null or blank");
+        }
+        this.description = description;
     }
 
     @Override
