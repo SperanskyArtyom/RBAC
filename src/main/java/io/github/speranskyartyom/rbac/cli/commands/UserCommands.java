@@ -193,7 +193,7 @@ public class UserCommands {
             System.out.println(user.format());
 
             if (roles.isEmpty()) {
-                System.out.println("User don't have any role or permission.");
+                System.out.println("User has no roles or permissions.");
             } else {
                 for (var role : roles) {
                     System.out.println(role.format());
