@@ -56,14 +56,14 @@ class UserFiltersTest {
 
     @Test
     void byEmailDomain_match_true() {
-        UserFilter filter = UserFilters.byEmailDomain("@company.com");
+        UserFilter filter = UserFilters.byEmailDomain("company.com");
 
         assertTrue(filter.test(user));
     }
 
     @Test
     void byEmailDomain_match_false() {
-        UserFilter filter = UserFilters.byEmailDomain("@gmail.com");
+        UserFilter filter = UserFilters.byEmailDomain("gmail.com");
 
         assertFalse(filter.test(user));
     }
@@ -86,7 +86,7 @@ class UserFiltersTest {
     void and_shouldReturnTrue_whenBothMatch() {
         UserFilter filter =
                 UserFilters.byUsername("john_doe")
-                        .and(UserFilters.byEmailDomain("@company.com"));
+                        .and(UserFilters.byEmailDomain("company.com"));
 
         assertTrue(filter.test(user));
     }
@@ -104,7 +104,7 @@ class UserFiltersTest {
     void or_shouldReturnTrue_whenOneMatches() {
         UserFilter filter =
                 UserFilters.byUsername("admin")
-                        .or(UserFilters.byEmailDomain("@company.com"));
+                        .or(UserFilters.byEmailDomain("company.com"));
 
         assertTrue(filter.test(user));
     }
