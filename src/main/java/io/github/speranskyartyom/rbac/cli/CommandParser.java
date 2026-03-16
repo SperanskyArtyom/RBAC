@@ -79,8 +79,16 @@ public class CommandParser {
     }
 
     public void printHelp() {
+        int maxLength = 0;
+
+        for (var entry : commands.entrySet()) {
+            maxLength = Math.max(maxLength, entry.getKey().length());
+        }
+
+        String format = "%-" + maxLength + "s - %s%n";
+
         System.out.println("Commands:");
         commandDescriptions.forEach((command, description) ->
-                System.out.println(command + "\t" + description));
+                System.out.printf(format, command, description));
     }
 }
