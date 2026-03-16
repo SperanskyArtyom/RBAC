@@ -1,5 +1,6 @@
 package io.github.speranskyartyom.rbac.cli;
 
+import io.github.speranskyartyom.rbac.cli.commands.AssignmentsCommands;
 import io.github.speranskyartyom.rbac.cli.commands.RolesCommands;
 import io.github.speranskyartyom.rbac.cli.commands.UserCommands;
 
@@ -14,6 +15,7 @@ public class CommandRegistry {
     private void registerCommands() {
         UserCommands.registerUserCommands(parser);
         RolesCommands.registerRoleCommands(parser);
+        AssignmentsCommands.registerCommands(parser);
     }
 
     public CommandParser getParser() {
