@@ -46,7 +46,7 @@ class CommandParserTest {
 
         parser.printHelp();
         String output = outContent.toString();
-        assertTrue(output.contains("test\tTest command"));
+        assertTrue(output.contains("test - Test command"));
     }
 
     @ParameterizedTest
@@ -138,7 +138,7 @@ class CommandParserTest {
         parser.printHelp();
 
         String output = outContent.toString();
-        assertTrue(output.contains("cmd1\tDescription 1"));
-        assertTrue(output.contains("cmd2\tDescription 2"));
+        assertTrue(output.contains("cmd1 - Description 1"));
+        assertTrue(output.contains("cmd2 - Description 2"));
     }
 }
