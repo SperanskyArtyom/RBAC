@@ -1,0 +1,76 @@
+package io.github.speranskyartyom.rbac.cli.commands;
+
+import io.github.speranskyartyom.rbac.cli.CommandParser;
+import io.github.speranskyartyom.rbac.interfaces.functional.Command;
+
+public class UtilityCommands {
+    public static void registerCommands(CommandParser parser) {
+        parser.registerCommand(
+                "help",
+                "Show this help message with all available commands.",
+                helpCommand(parser)
+        );
+        parser.registerCommand(
+                "stats",
+                "Display system statistics: users, roles, assignments, " +
+                        "average roles per user, top roles.",
+                statsCommand()
+        );
+        parser.registerCommand(
+                "clear",
+                "Clear the console screen.",
+                clearCommand()
+        );
+        parser.registerCommand(
+                "exit",
+                "Exit the program. Use -y or to skip confirmation.",
+                exitCommand()
+        );
+    }
+
+    private static Command helpCommand(CommandParser parser) {
+        return (_, _, _) -> parser.printHelp();
+    }
+
+    private static Command statsCommand() {
+        return (_, system, _) -> System.out.println(system.generateStatistics());
+    }
+
+    private static Command clearCommand() {
+        return (_, _, _) -> {
+            System.out.print("\033[H\033[2J");
+            System.out.flush();
+        };
+    }
+
+    private static Command exitCommand() {
+        return (scanner, system, args) -> {
+            boolean forced = false;
+            for (String arg : args) {
+                if (arg.equals("-y")) {
+                    forced = true;
+                } else {
+                    System.out.println("Warning: unknown argument ignored: " + arg);
+                }
+            }
+
+            if (!forced) {
+                System.out.print("Are you sure you want to exit (y/n): ");
+                String answer = scanner.nextLine();
+
+                if (!answer.equalsIgnoreCase("y") &&
+                        !answer.equalsIgnoreCase("yes")) {
+                    System.out.println("Exit cancelled.");
+                    return;
+                }
+            }
+
+            //TODO: offer to save data
+
+            System.exit(0);
+        };
+    }
+
+    //TODO: implement saveCommand()
+    //TODO: implement loadCommand()
+}
