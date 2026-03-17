@@ -89,8 +89,8 @@ public class PermissionCommands {
                 permissionResource = args[2];
             }
 
-            if (args.length > 4) {
-                String extra = String.join(" ", Arrays.copyOfRange(args, 4, args.length));
+            if (args.length > 3) {
+                String extra = String.join(" ", Arrays.copyOfRange(args, 3, args.length));
                 System.out.println("Warning: extra arguments ignored: " + extra);
             }
 
