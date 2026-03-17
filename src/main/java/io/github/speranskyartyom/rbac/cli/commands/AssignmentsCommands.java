@@ -110,7 +110,7 @@ public class AssignmentsCommands {
                 }
 
                 while (true) {
-                    System.out.println("Enter roll number you want to assign or type \"cancel\" to cancel assigning");
+                    System.out.println("Enter role number you want to assign or type \"cancel\" to cancel assigning");
                     String answer = scanner.nextLine();
 
                     if (answer.equals("cancel")) {
@@ -332,7 +332,7 @@ public class AssignmentsCommands {
         return ((_, system, args) -> {
             if (args.length > 0) {
                 String extra = String.join(" ", args);
-                System.out.println("Warning: extra arguments ignored:" + extra);
+                System.out.println("Warning: extra arguments ignored: " + extra);
             }
 
             List<RoleAssignment> assignments = system.getAssignmentManager().findAll();
