@@ -421,7 +421,7 @@ public class RolesCommands {
             if (args.length > 0) {
                 String[] tokens = args[0].split("=", 2);
                 if (tokens.length != 2) {
-                    System.out.println("Invalid filter format: " + args[1] + ". Expected key=value");
+                    System.out.println("Invalid filter format: " + args[0] + ". Expected key=value");
                     return;
                 }
 
