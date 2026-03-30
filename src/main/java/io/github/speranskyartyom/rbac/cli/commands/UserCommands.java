@@ -155,8 +155,15 @@ public class UserCommands {
             }
 
             try {
-                system.getUserManager().add(new User(username, fullName, email));
+                User user = new User(username, fullName, email);
+                system.getUserManager().add(user);
                 System.out.println("User created successfully.");
+                system.getLogger().log(
+                        "CREATE USER",
+                        system.getCurrentUser(),
+                        "users",
+                        "created user - " + user.format()
+                );
             } catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());
             }
@@ -302,6 +309,12 @@ public class UserCommands {
             try {
                 system.getUserManager().remove(user);
                 System.out.println("User " + username + " removed successfully.");
+                system.getLogger().log(
+                        "DELETE USER",
+                        system.getCurrentUser(),
+                        "users",
+                        "deleted user - " + username
+                );
             } catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());
             }

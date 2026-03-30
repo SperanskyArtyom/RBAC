@@ -256,6 +256,13 @@ public class AssignmentsCommands {
             try {
                 system.getAssignmentManager().add(assignment);
                 System.out.println("Role assigned successfully.");
+                system.getLogger().log(
+                        "ASSIGN ROLE",
+                        system.getCurrentUser(),
+                        "assignments",
+                        "assigned role - " + assignment.role().format() +
+                                " to user - " + assignment.user().format()
+                );
             } catch (IllegalArgumentException e) {
                 System.out.println("Error: " + e.getMessage());
             }
@@ -325,6 +332,13 @@ public class AssignmentsCommands {
             }
 
             System.out.println("Assignment revoked successfully.");
+            system.getLogger().log(
+                    "REVOKE ROLE",
+                    system.getCurrentUser(),
+                    "assignments",
+                    "revoked role - " + assignment.role().format() +
+                            "from user - " + assignment.user().format()
+            );
         });
     }
 

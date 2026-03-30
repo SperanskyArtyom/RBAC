@@ -152,6 +152,12 @@ public class RolesCommands {
             try {
                 system.getRoleManager().add(role);
                 System.out.println("Role " + role.getName() + " added successfully.");
+                system.getLogger().log(
+                        "ROLE CREATE",
+                        system.getCurrentUser(),
+                        "roles",
+                        "created role - " + role.format()
+                );
             } catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());
             }
@@ -282,12 +288,18 @@ public class RolesCommands {
             }
 
             try {
-                for (var assignment: activeAssignments) {
+                for (var assignment : activeAssignments) {
                     system.getAssignmentManager().remove(assignment);
                     System.out.printf("Assignment for user %s is removed.\n", assignment.user().username());
                 }
                 system.getRoleManager().remove(role);
                 System.out.println("Role removed successfully.");
+                system.getLogger().log(
+                        "DELETE ROLE",
+                        system.getCurrentUser(),
+                        "roles",
+                        "deleted role - " + role.format()
+                );
             } catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());
             }

@@ -1,6 +1,7 @@
 package io.github.speranskyartyom.rbac.core;
 
 import io.github.speranskyartyom.rbac.interfaces.RoleAssignment;
+import io.github.speranskyartyom.rbac.logging.AuditLog;
 import io.github.speranskyartyom.rbac.managers.AssignmentManager;
 import io.github.speranskyartyom.rbac.managers.RoleManager;
 import io.github.speranskyartyom.rbac.managers.UserManager;
@@ -20,6 +21,7 @@ public class RBACSystem {
     private final UserManager userManager = new UserManager();
     private final RoleManager roleManager = new RoleManager();
     private final AssignmentManager assignmentManager = new AssignmentManager(userManager, roleManager);
+    private final AuditLog logger = new AuditLog();
 
     private String currentUser;
 
@@ -90,6 +92,10 @@ public class RBACSystem {
             throw new IllegalArgumentException("User does not exist: " + username);
         }
         currentUser = username;
+    }
+
+    public AuditLog getLogger() {
+        return logger;
     }
 
     public String generateStatistics() {

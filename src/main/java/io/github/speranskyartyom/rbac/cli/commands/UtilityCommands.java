@@ -26,6 +26,11 @@ public class UtilityCommands {
                 "Exit the program. Use -y or to skip confirmation.",
                 exitCommand()
         );
+        parser.registerCommand(
+                "audit-log",
+                "Print logs",
+                auditLogCommand()
+        );
     }
 
     private static Command helpCommand(CommandParser parser) {
@@ -44,7 +49,7 @@ public class UtilityCommands {
     }
 
     private static Command exitCommand() {
-        return (scanner, system, args) -> {
+        return (scanner, _, args) -> {
             boolean forced = false;
             for (String arg : args) {
                 if (arg.equals("-y")) {
@@ -69,6 +74,10 @@ public class UtilityCommands {
 
             System.exit(0);
         };
+    }
+
+    private static Command auditLogCommand() {
+        return (_, system, _) -> system.getLogger().printLog();
     }
 
     //TODO: implement saveCommand()

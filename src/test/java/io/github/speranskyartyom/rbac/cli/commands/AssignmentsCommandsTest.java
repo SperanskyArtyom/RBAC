@@ -3,6 +3,7 @@ package io.github.speranskyartyom.rbac.cli.commands;
 import io.github.speranskyartyom.rbac.cli.CommandParser;
 import io.github.speranskyartyom.rbac.core.RBACSystem;
 import io.github.speranskyartyom.rbac.interfaces.RoleAssignment;
+import io.github.speranskyartyom.rbac.logging.AuditLog;
 import io.github.speranskyartyom.rbac.managers.AssignmentManager;
 import io.github.speranskyartyom.rbac.managers.RoleManager;
 import io.github.speranskyartyom.rbac.managers.UserManager;
@@ -33,6 +34,7 @@ class AssignmentsCommandsTest {
     private UserManager mockUserManager;
     private RoleManager mockRoleManager;
     private AssignmentManager mockAssignmentManager;
+    private AuditLog mockLogger;
     private CommandParser parser;
     private ByteArrayOutputStream outContent;
     private PrintStream originalOut;
@@ -42,10 +44,12 @@ class AssignmentsCommandsTest {
         mockUserManager = mock(UserManager.class);
         mockRoleManager = mock(RoleManager.class);
         mockAssignmentManager = mock(AssignmentManager.class);
+        mockLogger = mock(AuditLog.class);
         mockSystem = mock(RBACSystem.class);
         when(mockSystem.getUserManager()).thenReturn(mockUserManager);
         when(mockSystem.getRoleManager()).thenReturn(mockRoleManager);
         when(mockSystem.getAssignmentManager()).thenReturn(mockAssignmentManager);
+        when(mockSystem.getLogger()).thenReturn(mockLogger);
 
         parser = new CommandParser();
         AssignmentsCommands.registerCommands(parser);
