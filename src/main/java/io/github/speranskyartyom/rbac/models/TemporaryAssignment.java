@@ -2,6 +2,7 @@ package io.github.speranskyartyom.rbac.models;
 
 import io.github.speranskyartyom.rbac.models.records.AssignmentMetadata;
 import io.github.speranskyartyom.rbac.models.records.User;
+import io.github.speranskyartyom.rbac.utils.ValidationUtils;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -18,18 +19,12 @@ public class TemporaryAssignment extends AbstractRoleAssignment {
             AssignmentMetadata metadata,
             String expiresAt,
             boolean autoRenew) {
-        validateDate(expiresAt);
+        if (!ValidationUtils.isValidDate(expiresAt)) {
+            throw new IllegalArgumentException("expiresAt must be ISO offset format");
+        }
         super(user, role, metadata);
         this.expiresAt = expiresAt;
         this.autoRenew = autoRenew;
-    }
-
-    private static void validateDate(String date) {
-        try {
-            OffsetDateTime.parse(date, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("expiresAt must be ISO offset format");
-        }
     }
 
     @Override
@@ -43,7 +38,9 @@ public class TemporaryAssignment extends AbstractRoleAssignment {
     }
 
     public void extend(String newExpirationDate) {
-        validateDate(newExpirationDate);
+        if (!ValidationUtils.isValidDate(newExpirationDate)) {
+            throw new IllegalArgumentException("expiresAt must be ISO offset format");
+        }
         expiresAt = newExpirationDate;
     }
 

@@ -1,44 +1,27 @@
 package io.github.speranskyartyom.rbac.models.records;
 
+import io.github.speranskyartyom.rbac.utils.ValidationUtils;
+
 public record Permission(String name, String resource, String description) {
 
     public Permission(
             String name,
             String resource,
             String description) {
-        this.name = normalizeName(name);
-        this.resource = normalizeResource(resource);
+        validate(name, resource, description);
+        this.name = ValidationUtils.normalizeString(name, true);
+        this.resource = ValidationUtils.normalizeString(resource);
         this.description = description;
-        validate(this.name, this.resource, this.description);
-    }
-
-    private static String normalizeName(String name) {
-        return name != null ? name.toUpperCase() : null;
-    }
-
-    private static String normalizeResource(String resource) {
-        return resource != null ? resource.toLowerCase() : null;
     }
 
     private static void validate(String name, String resource, String description) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException(
-                    "Name must not be null or blank. Given: " + name);
-        }
-
-        if (resource == null || resource.isBlank()) {
-            throw new IllegalArgumentException(
-                    "Resource must not be null or blank. Given: " + resource);
-        }
-
-        if (description == null || description.isBlank()) {
-            throw new IllegalArgumentException(
-                    "Description must not be null or blank. Given: " + description);
-        }
+        ValidationUtils.requireNonEmpty(name, "name");
+        ValidationUtils.requireNonEmpty(resource, "resource");
+        ValidationUtils.requireNonEmpty(description, "description");
 
         if (name.chars().anyMatch(Character::isWhitespace)) {
             throw new IllegalArgumentException(
-                    "Name must not contain spaces. Given: " + name);
+                    "name must not contain spaces. Given: " + name);
         }
     }
 

@@ -1,6 +1,7 @@
 package io.github.speranskyartyom.rbac.models;
 
 import io.github.speranskyartyom.rbac.models.records.Permission;
+import io.github.speranskyartyom.rbac.utils.ValidationUtils;
 
 import java.util.*;
 
@@ -51,9 +52,7 @@ public class Role {
     }
 
     public void setName(String name) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Name must not be null or blank");
-        }
+        ValidationUtils.requireNonEmpty(name, "name");
         this.name = name;
     }
 
@@ -62,9 +61,7 @@ public class Role {
     }
 
     public void setDescription(String description) {
-        if (description == null || description.isBlank()) {
-            throw new IllegalArgumentException("Description must not be null or blank");
-        }
+        ValidationUtils.requireNonEmpty(description, "description");
         this.description = description;
     }
 

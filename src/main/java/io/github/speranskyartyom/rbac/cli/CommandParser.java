@@ -2,6 +2,7 @@ package io.github.speranskyartyom.rbac.cli;
 
 import io.github.speranskyartyom.rbac.core.RBACSystem;
 import io.github.speranskyartyom.rbac.interfaces.functional.Command;
+import io.github.speranskyartyom.rbac.utils.ValidationUtils;
 
 import java.util.*;
 
@@ -32,14 +33,10 @@ public class CommandParser {
     }
 
     public void registerCommand(String name, String description, Command command) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Command name can not be null or blank");
-        }
-        if (description == null || description.isBlank()) {
-            throw new IllegalArgumentException("Description can not be null or blank");
-        }
+        ValidationUtils.requireNonEmpty(name, "name");
+        ValidationUtils.requireNonEmpty(description, "description");
         if (command == null) {
-            throw new IllegalArgumentException("Command can not be null");
+            throw new IllegalArgumentException("command can not be null");
         }
 
         commands.put(name, command);

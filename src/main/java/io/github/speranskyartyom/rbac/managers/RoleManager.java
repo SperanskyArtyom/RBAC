@@ -3,6 +3,7 @@ package io.github.speranskyartyom.rbac.managers;
 import io.github.speranskyartyom.rbac.interfaces.functional.RoleFilter;
 import io.github.speranskyartyom.rbac.models.Role;
 import io.github.speranskyartyom.rbac.models.records.Permission;
+import io.github.speranskyartyom.rbac.utils.ValidationUtils;
 
 import java.util.*;
 
@@ -61,9 +62,7 @@ public class RoleManager implements Repository<Role> {
     }
 
     public void update(String name, String newName, String newDescription) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Name can not be null or blank");
-        }
+        ValidationUtils.requireNonEmpty(name, "name");
 
         if (!exists(name)) {
             throw new IllegalArgumentException("Role \"" + name + "\" not in registry");
