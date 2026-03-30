@@ -31,7 +31,7 @@ class PermissionTest {
                 () -> new Permission(null, "users", "desc")
         );
 
-        assertTrue(ex.getMessage().contains("Name must not be null or blank"));
+        assertTrue(ex.getMessage().contains("name must not be null or blank"));
     }
 
     @Test
@@ -59,7 +59,7 @@ class PermissionTest {
                 () -> new Permission("READ", null, "desc")
         );
 
-        assertTrue(ex.getMessage().contains("Resource must not be null or blank"));
+        assertTrue(ex.getMessage().contains("resource must not be null or blank"));
     }
 
     @Test
@@ -77,7 +77,7 @@ class PermissionTest {
                 () -> new Permission("READ", "users", null)
         );
 
-        assertTrue(ex.getMessage().contains("Description must not be null or blank"));
+        assertTrue(ex.getMessage().contains("description must not be null or blank"));
     }
 
     @Test
