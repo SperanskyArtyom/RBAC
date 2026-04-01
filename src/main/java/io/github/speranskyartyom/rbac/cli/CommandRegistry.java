@@ -16,6 +16,7 @@ public class CommandRegistry {
         AssignmentsCommands.registerCommands(parser);
         PermissionCommands.registerCommands(parser);
         UtilityCommands.registerCommands(parser);
+        ReportCommands.registerCommands(parser);
     }
 
     public CommandParser getParser() {

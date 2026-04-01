@@ -99,4 +99,14 @@ class CommandRegistryTest {
         assertTrue(output.contains("clear"));
         assertTrue(output.contains("exit"));
     }
+
+    @Test
+    @DisplayName("Registry should register all report commands")
+    void reportCommandsRegistered() {
+        registry.getParser().printHelp();
+        String output = outContent.toString();
+        assertTrue(output.contains("report-users"));
+        assertTrue(output.contains("report-roles"));
+        assertTrue(output.contains("report-matrix"));
+    }
 }
