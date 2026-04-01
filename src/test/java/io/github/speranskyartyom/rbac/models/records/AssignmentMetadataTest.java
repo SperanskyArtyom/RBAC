@@ -99,7 +99,7 @@ class AssignmentMetadataTest {
 
         String formatted = metadata.format();
 
-        assertTrue(formatted.contains("Assigned Metadata"));
+        assertTrue(formatted.contains("Assignment metadata"));
         assertTrue(formatted.contains("admin"));
         assertTrue(formatted.contains(assignedAt));
         assertTrue(formatted.contains("manual"));
@@ -115,7 +115,7 @@ class AssignmentMetadataTest {
 
         String formatted = metadata.format();
 
-        assertTrue(formatted.contains("Assigned Metadata"));
+        assertTrue(formatted.contains("Assignment metadata"));
         assertTrue(formatted.contains("admin"));
         assertTrue(formatted.contains(assignedAt));
         assertFalse(formatted.contains("reason"));

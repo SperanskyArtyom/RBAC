@@ -29,7 +29,7 @@ public record AssignmentMetadata(String assignedBy, String assignedAt, String re
     public String format() {
         StringBuilder result = new StringBuilder();
         result.append(String.format(
-                "Assigned Metadata: by - %s, at - %s",
+                "Assignment metadata: by - %s, at - %s",
                 assignedBy, assignedAt));
 
         if (reason != null)
