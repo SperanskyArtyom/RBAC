@@ -280,7 +280,7 @@ class UserCommandsTest {
 
         verify(mockUserManager).remove(user);
         String output = outContent.toString();
-        assertTrue(output.contains("Delete user john? (y/n)"));
+        assertTrue(output.contains("Delete user john?"));
         assertTrue(output.contains("User john removed successfully"));
     }
 
@@ -330,7 +330,7 @@ class UserCommandsTest {
         when(mockUserManager.findByFilter(any())).thenReturn(List.of(user));
 
         // Simulate: choose filter "username", enter "john", then "search"
-        String input = "username\njohn\nsearch\n";
+        String input = "1\njohn\n5\n";
         Scanner scanner = new Scanner(input);
 
         parser.parseAndExecute("user-search", scanner, mockSystem);

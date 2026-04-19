@@ -88,7 +88,7 @@ public class ConsoleUtils {
         }
         System.out.printf(borderFormat, "└", "┴", "┘");
 
-        int choice = promptInt(scanner, "Enter number of option: ", 1, options.size());
+        int choice = promptInt(scanner, "Enter number of option", 1, options.size());
 
         return options.get(choice - 1);
     }

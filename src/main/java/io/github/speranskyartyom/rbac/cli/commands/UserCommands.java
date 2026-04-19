@@ -8,6 +8,7 @@ import io.github.speranskyartyom.rbac.interfaces.functional.UserFilter;
 import io.github.speranskyartyom.rbac.managers.UserManager;
 import io.github.speranskyartyom.rbac.models.Role;
 import io.github.speranskyartyom.rbac.models.records.User;
+import io.github.speranskyartyom.rbac.utils.ConsoleUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -129,22 +130,19 @@ public class UserCommands {
             String username, fullName, email;
 
             if (args.length < 1) {
-                System.out.print("Enter username: ");
-                username = scanner.nextLine();
+                username = ConsoleUtils.promptString(scanner, "Enter username", true);
             } else {
                 username = args[0];
             }
 
             if (args.length < 2) {
-                System.out.print("Enter full name: ");
-                fullName = scanner.nextLine();
+                fullName = ConsoleUtils.promptString(scanner, "Enter full name", true);
             } else {
                 fullName = args[1];
             }
 
             if (args.length < 3) {
-                System.out.print("Enter email: ");
-                email = scanner.nextLine();
+                email = ConsoleUtils.promptString(scanner, "Enter email", true);
             } else {
                 email = args[2];
             }
@@ -175,8 +173,7 @@ public class UserCommands {
             String username;
 
             if (args.length < 1) {
-                System.out.print("Enter username: ");
-                username = scanner.nextLine();
+                username = ConsoleUtils.promptString(scanner, "Enter username", true);
             } else {
                 username = args[0];
             }
@@ -214,22 +211,19 @@ public class UserCommands {
             String username, fullName, email;
 
             if (args.length < 1) {
-                System.out.print("Enter username to update: ");
-                username = scanner.nextLine();
+                username = ConsoleUtils.promptString(scanner, "Enter username to update", true);
             } else {
                 username = args[0];
             }
 
             if (args.length < 2) {
-                System.out.print("Enter new full name: ");
-                fullName = scanner.nextLine();
+                fullName = ConsoleUtils.promptString(scanner, "Enter new full name", true);
             } else {
                 fullName = args[1];
             }
 
             if (args.length < 3) {
-                System.out.print("Enter new email: ");
-                email = scanner.nextLine();
+                email = ConsoleUtils.promptString(scanner, "Enter new email", true);
             } else {
                 email = args[2];
             }
@@ -253,8 +247,7 @@ public class UserCommands {
             String username;
 
             if (args.length < 1) {
-                System.out.print("Enter username to delete: ");
-                username = scanner.nextLine();
+                username = ConsoleUtils.promptString(scanner, "Enter username to delete", true);
             } else {
                 username = args[0];
             }
@@ -280,18 +273,9 @@ public class UserCommands {
             }
 
             if (!isConfirmed) {
-                while (true) {
-                    System.out.printf("Delete user %s? (y/n): ", username);
-                    String answer = scanner.nextLine().toLowerCase();
-
-                    if (answer.equals("yes") || answer.equals("y")) {
-                        break;
-                    } else if (answer.equals("no") || answer.equals("n")) {
-                        System.out.println("Deletion cancelled.");
-                        return;
-                    }
-
-                    System.out.println("Invalid option. Type \"yes\" to confirm or \"no\" to cancel deletion.");
+                if (!ConsoleUtils.promptYesNo(scanner, "Delete user %s?".formatted(username))) {
+                    System.out.println("Deletion cancelled.");
+                    return;
                 }
             }
 
@@ -329,7 +313,7 @@ public class UserCommands {
             }
 
             System.out.print("""
-                    Choose filters:
+                    Filters:
                     username - by username (contains)
                     email    - by email (contains)
                     domain   - by domain (exact match)
@@ -340,18 +324,22 @@ public class UserCommands {
 
             while (true) {
                 StringBuilder sb = new StringBuilder();
-                System.out.println("Enter a filter or type \"search\"");
-                String option = scanner.nextLine();
+                List<String> options = List.of("username", "email", "domain", "fullname", "stop adding filters");
+                String option = ConsoleUtils.promptChoice(scanner, "Choose a filter", options);
 
                 switch (option) {
                     case "username", "email", "domain", "fullname" -> {
                         sb.append(option);
                         sb.append("=");
-                        System.out.print(option + "=");
-                        sb.append(scanner.nextLine());
+                        String value = ConsoleUtils.promptString(
+                                scanner,
+                                "Enter value of %s filter".formatted(option),
+                                false
+                        );
+                        sb.append(value);
                         argList.add(sb.toString());
                     }
-                    case "search" -> {
+                    default -> {
                         args = argList.toArray(new String[0]);
                         userListCommand().execute(
                                 scanner,
@@ -360,7 +348,6 @@ public class UserCommands {
                         );
                         return;
                     }
-                    default -> System.out.println("Invalid option. Try again.");
                 }
             }
         });
