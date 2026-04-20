@@ -120,6 +120,7 @@ class AssignmentsCommandsTest {
         Role role2 = new Role("Viewer", "Viewer");
         when(mockUserManager.findByUsername("john")).thenReturn(Optional.of(user));
         when(mockRoleManager.findAll()).thenReturn(List.of(role1, role2));
+        when(mockRoleManager.findByName(any())).thenReturn(Optional.of(role1));
         when(mockSystem.getCurrentUser()).thenReturn("admin");
 
         String input = "john\n1\n1\nMain admin\n";
@@ -134,10 +135,9 @@ class AssignmentsCommandsTest {
                         assignment.metadata().reason().equals("Main admin")
         ));
         String output = outContent.toString();
-        assertTrue(output.contains("Available roles:"));
-        assertTrue(output.contains("1 - Admin"));
-        assertTrue(output.contains("2 - Viewer"));
-        assertTrue(output.contains("Enter role number"));
+        assertTrue(output.contains("Choose role you want to assign"));
+        assertTrue(output.contains("Admin"));
+        assertTrue(output.contains("Viewer"));
         assertTrue(output.contains("Choose assignment type"));
         assertTrue(output.contains("Enter assignment reason"));
         assertTrue(output.contains("Role assigned successfully"));
@@ -150,6 +150,7 @@ class AssignmentsCommandsTest {
         Role role = new Role("Admin", "Administrator");
         when(mockUserManager.findByUsername("john")).thenReturn(Optional.of(user));
         when(mockRoleManager.findAll()).thenReturn(List.of(role));
+        when(mockRoleManager.findByName(any())).thenReturn(Optional.of(role));
         when(mockSystem.getCurrentUser()).thenReturn("admin");
 
         String expiration = "2025-12-31T23:59:59+00:00";
@@ -265,23 +266,6 @@ class AssignmentsCommandsTest {
         verify(mockAssignmentManager).remove(assignment);
         String output = outContent.toString();
         assertTrue(output.contains("Assignment revoked successfully"));
-    }
-
-    @Test
-    @DisplayName("revoke-role with cancel should not revoke")
-    void revokeRoleCancel() {
-        User user = new User("john", "John Doe", "john@doe.com");
-        Role role = new Role("Admin", "Admin");
-        PermanentAssignment assignment = new PermanentAssignment(user, role,
-                AssignmentMetadata.now("admin", "reason"));
-        when(mockUserManager.exists("john")).thenReturn(true);
-        when(mockAssignmentManager.findByFilter(any())).thenReturn(List.of(assignment));
-
-        parser.parseAndExecute("revoke-role john", new Scanner("cancel\n"), mockSystem);
-
-        verify(mockAssignmentManager, never()).remove(any());
-        String output = outContent.toString();
-        assertTrue(output.contains("Assignment revoke cancelled"));
     }
 
     @Test
@@ -599,7 +583,7 @@ class AssignmentsCommandsTest {
     void assignmentSearchInteractive() {
         when(mockAssignmentManager.findByFilter(any())).thenReturn(List.of());
 
-        String input = "username\njohn\nsearch\n";
+        String input = "1\njohn\n7\n";
         Scanner scanner = new Scanner(input);
 
         parser.parseAndExecute("assignment-search", scanner, mockSystem);

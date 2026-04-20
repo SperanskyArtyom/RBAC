@@ -11,6 +11,7 @@ import io.github.speranskyartyom.rbac.models.Role;
 import io.github.speranskyartyom.rbac.models.TemporaryAssignment;
 import io.github.speranskyartyom.rbac.models.records.AssignmentMetadata;
 import io.github.speranskyartyom.rbac.models.records.User;
+import io.github.speranskyartyom.rbac.utils.ConsoleUtils;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -80,8 +81,7 @@ public class AssignmentsCommands {
             String username;
 
             if (args.length < 1) {
-                System.out.print("Enter username: ");
-                username = scanner.nextLine();
+                username = ConsoleUtils.promptString(scanner, "Enter username", true);
             } else {
                 username = args[0];
             }
@@ -103,34 +103,13 @@ public class AssignmentsCommands {
                     System.out.println("There are no roles registered in the system. Assigning denied.");
                     return;
                 }
-
-                System.out.println("Available roles: ");
-                for (int i = 0; i < roles.size(); i++) {
-                    System.out.println((i + 1) + " - " + roles.get(i).getName());
+                List<String> rolesName = new ArrayList<>();
+                for (var r : roles) {
+                    rolesName.add(r.getName());
                 }
+                String roleName = ConsoleUtils.promptChoice(scanner, "Choose role you want to assign", rolesName);
+                role = system.getRoleManager().findByName(roleName).get();
 
-                while (true) {
-                    System.out.println("Enter role number you want to assign or type \"cancel\" to cancel assigning");
-                    String answer = scanner.nextLine();
-
-                    if (answer.equals("cancel")) {
-                        System.out.println("Assigning cancelled.");
-                        return;
-                    }
-
-                    try {
-                        int number = Integer.parseInt(answer);
-                        if (number < 1 || number > roles.size()) {
-                            System.out.printf("Number %d is not in range [1, %d]. Try again.\n",
-                                    number, roles.size());
-                            continue;
-                        }
-                        role = roles.get(number - 1);
-                        break;
-                    } catch (NumberFormatException e) {
-                        System.out.println("Invalid option. Try again.");
-                    }
-                }
             } else {
                 Optional<Role> roleOpt = system.getRoleManager().findByName(args[1]);
 
@@ -141,34 +120,14 @@ public class AssignmentsCommands {
                 role = roleOpt.get();
             }
 
-            boolean isPermanent;
+            String type;
             if (args.length < 3) {
-                System.out.println("Choose assignment type. 1 - permanent, 2 - temporary");
+                List<String> types = List.of("permanent", "temporary");
+                type = ConsoleUtils.promptChoice(scanner, "Choose assignment type", types);
 
-                while (true) {
-                    System.out.print("Assignment type: ");
-                    String answer = scanner.nextLine();
-
-                    if (answer.equals("1")) {
-                        isPermanent = true;
-                        break;
-                    }
-
-                    if (answer.equals("2")) {
-                        isPermanent = false;
-                        break;
-                    }
-
-                    System.out.println("Invalid option. Try again.");
-                }
             } else {
-                String type = args[2];
-
-                if (type.equals("permanent")) {
-                    isPermanent = true;
-                } else if (type.equals("temporary")) {
-                    isPermanent = false;
-                } else {
+                type = args[2];
+                if (!type.equals("permanent") &&     !type.equals("temporary")) {
                     System.out.println("Error: Invalid assignment type.");
                     System.out.println("Expected: permanent or temporary. Given: " + type);
                     return;
@@ -176,12 +135,11 @@ public class AssignmentsCommands {
             }
 
             RoleAssignment assignment;
-            if (isPermanent) {
+            if (type.equals("permanent")) {
                 String reason;
 
                 if (args.length < 4) {
-                    System.out.print("Enter assignment reason: ");
-                    reason = scanner.nextLine();
+                    reason = ConsoleUtils.promptString(scanner, "Enter assignment reason", true);
                 } else {
                     reason = args[3];
                 }
@@ -201,8 +159,7 @@ public class AssignmentsCommands {
 
                 if (args.length < 4) {
                     while (true) {
-                        System.out.print("Enter expiration date in ISO format: ");
-                        expiresAt = scanner.nextLine();
+                        expiresAt = ConsoleUtils.promptString(scanner, "Enter expiration date in ISO format", true);
 
                         try {
                             OffsetDateTime.parse(expiresAt, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
@@ -230,8 +187,7 @@ public class AssignmentsCommands {
                 String reason;
 
                 if (args.length < 5) {
-                    System.out.print("Enter assignment reason: ");
-                    reason = scanner.nextLine();
+                    reason = ConsoleUtils.promptString(scanner, "Enter assignment reason", true);
                 } else {
                     reason = args[4];
                 }
@@ -275,7 +231,11 @@ public class AssignmentsCommands {
 
             if (args.length < 1) {
                 System.out.print("Enter the username of the user whose assignment you want to revoke: ");
-                username = scanner.nextLine();
+                username = ConsoleUtils.promptString(
+                        scanner,
+                        "Enter the username of the user whose assignment you want to revoke",
+                        true
+                );
             } else {
                 username = args[0];
             }
@@ -303,27 +263,7 @@ public class AssignmentsCommands {
                 System.out.println((i + 1) + ". " + assignments.get(i).toString());
             }
 
-            RoleAssignment assignment;
-            while (true) {
-                System.out.print("Enter assignment's number or type \"cancel\" to cancel revoke: ");
-                String answer = scanner.nextLine();
-                if (answer.equals("cancel")) {
-                    System.out.println("Assignment revoke cancelled.");
-                    return;
-                }
-                try {
-                    int number = Integer.parseInt(answer);
-                    if (number < 1 || number > assignments.size()) {
-                        System.out.printf("Number %d is not in range [1, %d]. Try again.\n",
-                                number, assignments.size());
-                        continue;
-                    }
-                    assignment = assignments.get(number - 1);
-                    break;
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid option. Try again.");
-                }
-            }
+            RoleAssignment assignment = ConsoleUtils.promptChoice(scanner, "Choose assignment to revoke", assignments);
 
             if (assignment instanceof PermanentAssignment permanentAssignment) {
                 permanentAssignment.revoke();
@@ -359,8 +299,7 @@ public class AssignmentsCommands {
             String username;
 
             if (args.length < 1) {
-                System.out.print("Enter username: ");
-                username = scanner.nextLine();
+                username = ConsoleUtils.promptString(scanner, "Enter username", true);
             } else {
                 username = args[0];
             }
@@ -397,8 +336,7 @@ public class AssignmentsCommands {
             String roleName;
 
             if (args.length < 1) {
-                System.out.print("Enter role name: ");
-                roleName = scanner.nextLine();
+                roleName = ConsoleUtils.promptString(scanner, "Enter role name", true);
             } else {
                 roleName = args[0];
             }
@@ -470,24 +408,16 @@ public class AssignmentsCommands {
                     System.out.println("Warning: extra arguments ignored: " + extra);
                 }
             } else {
-                System.out.println("Choose identification method:");
-                System.out.println("1 - by assignment ID");
-                System.out.println("2 - by username and role name");
-                String choice = scanner.nextLine();
-                switch (choice) {
-                    case "1" -> {
-                        System.out.print("Enter assignment ID: ");
-                        assignmentId = scanner.nextLine();
+                List<String> idMethods = List.of("by assignment ID", "by username and role name");
+                String method = ConsoleUtils.promptChoice(scanner, "Choose identification method", idMethods);
+
+                switch (method) {
+                    case "by assignment ID" -> {
+                        assignmentId = ConsoleUtils.promptString(scanner, "Enter assignment ID", true);
                     }
-                    case "2" -> {
-                        System.out.print("Enter username: ");
-                        username = scanner.nextLine();
-                        System.out.print("Enter role name: ");
-                        roleName = scanner.nextLine();
-                    }
-                    default -> {
-                        System.out.println("Invalid choice.");
-                        return;
+                    case "by username and role name" -> {
+                        username = ConsoleUtils.promptString(scanner, "Enter username", true);
+                        roleName = ConsoleUtils.promptString(scanner, "Enter role name", true);
                     }
                 }
             }
@@ -530,7 +460,10 @@ public class AssignmentsCommands {
             }
 
             System.out.print("Enter new expiration date in ISO format (yyyy-MM-ddTHH:mm:ss±HH:mm): ");
-            String newDate = scanner.nextLine();
+            String newDate = ConsoleUtils.promptString(
+                    scanner,
+                    "Enter new expiration date in ISO format (yyyy-MM-ddTHH:mm:ss±HH:mm)",
+                    true);
 
             try {
                 system.getAssignmentManager().extendTemporaryAssignment(assignment.assignmentId(), newDate);
@@ -590,24 +523,28 @@ public class AssignmentsCommands {
                         expiresBefore - ISO date format
                         """);
 
+                List<String> filters = List.of(
+                        "username", "role", "type", "status", "assignedAfter", "expiresBefore", "stop adding filters"
+                );
+
                 List<String> argList = new ArrayList<>();
 
                 while (true) {
                     StringBuilder sb = new StringBuilder();
 
                     System.out.println("Enter a filter or type \"search\"");
-                    String option = scanner.nextLine().toLowerCase();
+                    String option = ConsoleUtils.promptChoice(scanner, "Choose filter", filters);
 
                     switch (option) {
                         case "username", "role", "type",
-                             "status", "assignedafter", "expiresbefore" -> {
+                             "status", "assignedAfter", "expiresBefore" -> {
                             sb.append(option);
                             sb.append("=");
-                            System.out.print(option + "=");
-                            sb.append(scanner.nextLine());
+                            String value = ConsoleUtils.promptString(scanner, "Enter value of " + option, false);
+                            sb.append(value);
                             argList.add(sb.toString());
                         }
-                        case "search" -> {
+                        case "stop adding filters" -> {
                             args = argList.toArray(new String[0]);
                             assignmentSearch().execute(
                                     scanner,
@@ -616,7 +553,6 @@ public class AssignmentsCommands {
                             );
                             return;
                         }
-                        default -> System.out.println("Invalid option. Try again.");
                     }
                 }
             }

@@ -67,7 +67,7 @@ public class ConsoleUtils {
         }
         System.out.println(ANSI_BLUE + message + ANSI_RESET);
 
-        int maxLength = message.length();
+        int maxLength = 0;
 
         for (T option : options) {
             maxLength = Math.max(maxLength, option.toString().length());
