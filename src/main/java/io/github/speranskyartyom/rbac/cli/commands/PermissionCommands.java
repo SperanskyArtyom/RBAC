@@ -6,6 +6,7 @@ import io.github.speranskyartyom.rbac.interfaces.functional.Command;
 import io.github.speranskyartyom.rbac.models.Role;
 import io.github.speranskyartyom.rbac.models.records.Permission;
 import io.github.speranskyartyom.rbac.models.records.User;
+import io.github.speranskyartyom.rbac.utils.ConsoleUtils;
 
 import java.util.*;
 
@@ -28,8 +29,7 @@ public class PermissionCommands {
             String username;
 
             if (args.length < 1) {
-                System.out.print("Enter username: ");
-                username = scanner.nextLine();
+                username = ConsoleUtils.promptString(scanner, "Enter username", true);
             } else {
                 username = args[0];
             }
@@ -69,22 +69,28 @@ public class PermissionCommands {
             String username, permissionName, permissionResource;
 
             if (args.length < 1) {
-                System.out.print("Enter username: ");
-                username = scanner.nextLine();
+                username = ConsoleUtils.promptString(scanner, "Enter username", true);
             } else {
                 username = args[0];
             }
 
             if (args.length < 2) {
-                System.out.print("Enter permission name: ");
-                permissionName = scanner.nextLine();
+                permissionName = ConsoleUtils.promptString(
+                        scanner,
+                        "Enter permission name",
+                        true
+                );
             } else {
                 permissionName = args[1];
             }
 
             if (args.length < 3) {
                 System.out.print("Enter permission's resource: ");
-                permissionResource = scanner.nextLine();
+                permissionResource = ConsoleUtils.promptString(
+                        scanner,
+                        "Enter permission's resource",
+                        true
+                );
             } else {
                 permissionResource = args[2];
             }
