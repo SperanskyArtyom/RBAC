@@ -133,9 +133,15 @@ class RolesCommandsTest {
         String input = """
                 Moderator
                 Moderator role
-                read messages "Can read messages"
-                delete messages "Can delete messages"
-                stop
+                yes
+                read
+                messages
+                Can read messages
+                yes
+                delete
+                messages
+                Can delete messages
+                no
                 """;
         Scanner scanner = new Scanner(input);
 
@@ -219,7 +225,7 @@ class RolesCommandsTest {
 
         verify(mockRoleManager, times(1)).update("Admin", "SuperAdmin", "New description");
         String output = outContent.toString();
-        assertTrue(output.contains("Enter role's name"));
+        assertTrue(output.contains("Enter role name"));
         assertTrue(output.contains("Enter new name"));
         assertTrue(output.contains("Enter new description"));
         assertTrue(output.contains("Role updated successfully"));
@@ -282,7 +288,7 @@ class RolesCommandsTest {
 
         verify(mockRoleManager, never()).remove(any());
         String output = outContent.toString();
-        assertTrue(output.contains("Delete role Admin? (y/n)"));
+        assertTrue(output.contains("Delete role Admin?"));
         assertTrue(output.contains("Deletion cancelled"));
     }
 
@@ -334,7 +340,7 @@ class RolesCommandsTest {
 
         verify(mockRoleManager, times(1)).addPermissionToRole(eq("Admin"), any(Permission.class));
         String output = outContent.toString();
-        assertTrue(output.contains("Enter role's name"));
+        assertTrue(output.contains("Enter role name"));
         assertTrue(output.contains("Enter new permission's name"));
         assertTrue(output.contains("Enter new permission's resource"));
         assertTrue(output.contains("Enter new permission's description"));
@@ -364,16 +370,16 @@ class RolesCommandsTest {
         role.addPermission(perm2);
         when(mockRoleManager.findByName("Admin")).thenReturn(Optional.of(role));
 
-        String input = "2\n";
+        String input = "2\nyes\n";
         Scanner scanner = new Scanner(input);
 
         parser.parseAndExecute("role-remove-permission Admin", scanner, mockSystem);
 
         verify(mockRoleManager, times(1)).removePermissionFromRole("Admin", perm2);
         String output = outContent.toString();
-        assertTrue(output.contains("Permissions:"));
-        assertTrue(output.contains("1 - " + perm1.format()));
-        assertTrue(output.contains("2 - " + perm2.format()));
+        assertTrue(output.contains("Choose permission to delete"));
+        assertTrue(output.contains(perm1.format()));
+        assertTrue(output.contains(perm2.format()));
         assertTrue(output.contains("Permission " + perm2.format() + " removed successfully."));
     }
 
@@ -384,7 +390,7 @@ class RolesCommandsTest {
         role.addPermission(new Permission("read", "messages", "desc"));
         when(mockRoleManager.findByName("Admin")).thenReturn(Optional.of(role));
 
-        String input = "cancel\n";
+        String input = "1\nno\n";
         Scanner scanner = new Scanner(input);
 
         parser.parseAndExecute("role-remove-permission Admin", scanner, mockSystem);
@@ -401,14 +407,14 @@ class RolesCommandsTest {
         role.addPermission(new Permission("read", "messages", "desc"));
         when(mockRoleManager.findByName("Admin")).thenReturn(Optional.of(role));
 
-        String input = "5\n1\n";
+        String input = "5\n1\nyes\n";
         Scanner scanner = new Scanner(input);
 
         parser.parseAndExecute("role-remove-permission Admin", scanner, mockSystem);
 
         verify(mockRoleManager, times(1)).removePermissionFromRole(any(), any());
         String output = outContent.toString();
-        assertTrue(output.contains("Number 5 is not in range [1, 1]"));
+        assertTrue(output.contains("5 not in range [1; 1]!"));
     }
 
     @Test

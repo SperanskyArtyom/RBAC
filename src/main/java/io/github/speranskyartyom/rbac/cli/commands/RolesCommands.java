@@ -8,6 +8,7 @@ import io.github.speranskyartyom.rbac.interfaces.functional.Command;
 import io.github.speranskyartyom.rbac.interfaces.functional.RoleFilter;
 import io.github.speranskyartyom.rbac.models.Role;
 import io.github.speranskyartyom.rbac.models.records.Permission;
+import io.github.speranskyartyom.rbac.utils.ConsoleUtils;
 
 import java.util.*;
 
@@ -79,15 +80,13 @@ public class RolesCommands {
             String name, description;
 
             if (args.length < 1) {
-                System.out.print("Enter role name: ");
-                name = scanner.nextLine();
+                name = ConsoleUtils.promptString(scanner, "Enter role name", true);
             } else {
                 name = args[0];
             }
 
             if (args.length < 2) {
-                System.out.print("Enter role description: ");
-                description = scanner.nextLine();
+                description = ConsoleUtils.promptString(scanner, "Enter role description", true);
             } else {
                 description = args[1];
             }
@@ -105,33 +104,17 @@ public class RolesCommands {
                 return;
             }
 
-            System.out.println("""
-                    Optional: add permissions.
-                    Format: name resource "description"
-                    To stop adding permissions type "stop\"""");
+            while (ConsoleUtils.promptYesNo(scanner, "Do you want to add permission?")) {
 
-            String option;
-            do {
-                option = scanner.nextLine();
-                Scanner argLine = new Scanner(option);
-
-                if (!argLine.hasNext()) {
-                    System.out.println("Error: permission's name missed. Try again.");
-                    continue;
-                }
-                String permissionName = getArg(argLine);
-
-                if (!argLine.hasNext()) {
-                    System.out.println("Error: permission's resource missed. Try again.");
-                    continue;
-                }
-                String permissionResource = getArg(argLine);
-
-                if (!argLine.hasNext()) {
-                    System.out.println("Error: permission's description missed. Try again.");
-                    continue;
-                }
-                String permissionDescription = getArg(argLine);
+                String permissionName = ConsoleUtils.promptString(
+                        scanner, "Enter permission name", true
+                );
+                String permissionResource = ConsoleUtils.promptString(
+                        scanner, "Enter permission's resource", true
+                );
+                String permissionDescription = ConsoleUtils.promptString(
+                        scanner, "Enter permission's description", true
+                );
 
                 try {
                     Permission permission = new Permission(
@@ -146,8 +129,7 @@ public class RolesCommands {
                     System.out.println("Error: " + e.getMessage());
                     return;
                 }
-
-            } while (!option.equals("stop"));
+            }
 
             try {
                 system.getRoleManager().add(role);
@@ -169,8 +151,7 @@ public class RolesCommands {
             String roleName;
 
             if (args.length < 1) {
-                System.out.print("Enter role name: ");
-                roleName = scanner.nextLine();
+                roleName = ConsoleUtils.promptString(scanner, "Enter role name", true);
             } else {
                 roleName = args[0];
             }
@@ -197,22 +178,23 @@ public class RolesCommands {
             String name, newName, newDescription;
 
             if (args.length < 1) {
-                System.out.print("Enter role's name: ");
-                name = scanner.nextLine();
+                name = ConsoleUtils.promptString(scanner, "Enter role name", true);
             } else {
                 name = args[0];
             }
 
             if (args.length < 2) {
-                System.out.print("Enter new name (press enter to keep the same): ");
-                newName = scanner.nextLine();
+                newName = ConsoleUtils.promptString(
+                        scanner, "Enter new name (press enter to keep the same)", false
+                );
             } else {
                 newName = args[1];
             }
 
             if (args.length < 3) {
-                System.out.print("Enter new description (press enter to keep the same): ");
-                newDescription = scanner.nextLine();
+                newDescription = ConsoleUtils.promptString(
+                        scanner, "Enter new description (press enter to keep the same", false
+                );
             } else {
                 newDescription = args[2];
             }
@@ -236,8 +218,7 @@ public class RolesCommands {
             String name;
 
             if (args.length < 1) {
-                System.out.print("Enter role's name: ");
-                name = scanner.nextLine();
+                name = ConsoleUtils.promptString(scanner, "Enter role name", true);
             } else {
                 name = args[0];
             }
@@ -272,18 +253,9 @@ public class RolesCommands {
             }
 
             if (!isConfirmed) {
-                while (true) {
-                    System.out.printf("Delete role %s? (y/n): ", name);
-                    String answer = scanner.nextLine().toLowerCase();
-
-                    if (answer.equals("yes") || answer.equals("y")) {
-                        break;
-                    } else if (answer.equals("no") || answer.equals("n")) {
-                        System.out.println("Deletion cancelled.");
-                        return;
-                    }
-
-                    System.out.println("Invalid option. Type \"yes\" to confirm or \"no\" to cancel deletion.");
+                if (!ConsoleUtils.promptYesNo(scanner, "Delete role " + name + "?")) {
+                    System.out.println("Deletion cancelled");
+                    return;
                 }
             }
 
@@ -311,29 +283,32 @@ public class RolesCommands {
             String roleName, permissionName, permissionResource, permissionDescription;
 
             if (args.length < 1) {
-                System.out.print("Enter role's name: ");
-                roleName = scanner.nextLine();
+                roleName = ConsoleUtils.promptString(scanner, "Enter role name", true);
             } else {
                 roleName = args[0];
             }
 
             if (args.length < 2) {
-                System.out.print("Enter new permission's name: ");
-                permissionName = scanner.nextLine();
+                permissionName = ConsoleUtils.promptString(
+                        scanner, "Enter new permission's name", true
+                );
             } else {
                 permissionName = args[1];
             }
 
             if (args.length < 3) {
-                System.out.print("Enter new permission's resource: ");
-                permissionResource = scanner.nextLine();
+                permissionResource = ConsoleUtils.promptString(
+                        scanner, "Enter new permission's resource", true
+                );
             } else {
                 permissionResource = args[2];
             }
 
             if (args.length < 4) {
                 System.out.print("Enter new permission's description: ");
-                permissionDescription = scanner.nextLine();
+                permissionDescription = ConsoleUtils.promptString(
+                        scanner, "Enter new permission's description", true
+                );
             } else {
                 permissionDescription = args[3];
             }
@@ -363,8 +338,7 @@ public class RolesCommands {
             String roleName;
 
             if (args.length < 1) {
-                System.out.print("Enter role's name: ");
-                roleName = scanner.nextLine();
+                roleName = ConsoleUtils.promptString(scanner, "Enter role name", true);
             } else {
                 roleName = args[0];
             }
@@ -392,35 +366,17 @@ public class RolesCommands {
 
             List<Permission> permissionList = new ArrayList<>(rolePermissions);
 
-            System.out.println("Permissions:");
+            Permission permission = ConsoleUtils.promptChoice(
+                    scanner, "Choose permission to delete", permissionList
+            );
 
-            for (int i = 0; i < permissionList.size(); i++) {
-                System.out.printf("%d - %s\n", i + 1, permissionList.get(i).format());
+            if (!ConsoleUtils.promptYesNo(
+                    scanner, "Do you want to delete " + permission.format() + "permission"
+            )) {
+                System.out.println("Deletion cancelled");
+                return;
             }
 
-            System.out.println("Enter a number of permission to remove or type \"cancel\": ");
-
-            int number;
-            while (true) {
-                String answer = scanner.nextLine();
-                if (answer.equals("cancel")) {
-                    System.out.println("Deletion cancelled.");
-                    return;
-                }
-                try {
-                    number = Integer.parseInt(answer);
-                    if (number < 1 || number > permissionList.size()) {
-                        System.out.printf("Number %d is not in range [1, %d]. Try again.\n",
-                                number, permissionList.size());
-                        continue;
-                    }
-                    break;
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid option. Try again.");
-                }
-            }
-
-            Permission permission = permissionList.get(number - 1);
             system.getRoleManager().removePermissionFromRole(roleName, permission);
             System.out.printf("Permission %s removed successfully.", permission.format());
         });
@@ -473,49 +429,35 @@ public class RolesCommands {
                 }
             } else {
 
-                while (true) {
-                    System.out.println("""
-                            Choose a filter:
-                            1 - by role name (contains)
-                            2 - by permission (name, resource)
-                            3 - by minimum number of permissions""");
+                List<String> filters = List.of(
+                        "by role name (contains)",
+                        "by permission (name, resource)",
+                        "by minimum number of permissions"
+                );
 
-                    String answer = scanner.nextLine();
-
-                    if (answer.equals("1")) {
-                        System.out.print("role name contains: ");
-                        String roleName = scanner.nextLine();
+                String answer = ConsoleUtils.promptChoice(scanner, "Choose filter", filters);
+                switch (answer) {
+                    case "by role name (contains)" -> {
+                        String roleName = ConsoleUtils.promptString(scanner, "Enter role name", false);
                         filter = RoleFilters.byNameContains(roleName);
-                        break;
                     }
-
-                    if (answer.equals("2")) {
-                        System.out.print("permission name contains: ");
-                        String permissionName = scanner.nextLine();
-                        System.out.print("permission resource contains: ");
-                        String permissionResource = scanner.nextLine();
+                    case "by permission (name, resource)" -> {
+                        String permissionName = ConsoleUtils.promptString(
+                                scanner, "Enter permission's name", false
+                        );
+                        String permissionResource = ConsoleUtils.promptString(
+                                scanner, "Enter permission's resource", false
+                        );
                         filter = RoleFilters.hasPermission(permissionName, permissionResource);
-                        break;
                     }
-
-                    if (answer.equals("3")) {
-                        System.out.print("minimum number of permissions: ");
-                        String s = scanner.nextLine();
-
-                        try {
-                            int min = Integer.parseInt(s);
-                            filter = RoleFilters.hasAtLeastNPermissions(min);
-                            break;
-                        } catch (NumberFormatException e) {
-                            System.out.println(s + " is not a number. Try again");
-                            continue;
-                        }
+                    case "by minimum number of permissions" -> {
+                        int minNumber = ConsoleUtils.promptInt(
+                                scanner, "Enter minimum number of permissions", 0, Integer.MAX_VALUE);
+                        filter = RoleFilters.hasAtLeastNPermissions(minNumber);
                     }
-
-                    System.out.println("Invalid option. Try again");
+                    default -> filter = null;
                 }
             }
-
             if (args.length > 1) {
                 String extra = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
                 System.out.println("Warning: extra arguments ignored: " + extra);
@@ -531,25 +473,5 @@ public class RolesCommands {
             System.out.println("Found roles:");
             roles.forEach(role -> System.out.println(role.format()));
         });
-    }
-
-    private static String getArg(Scanner scanner) {
-        String token = scanner.next();
-
-        if (token.startsWith("\"")) {
-            StringBuilder sb = new StringBuilder(token);
-
-            while (!token.endsWith("\"")) {
-                if (!scanner.hasNext()) {
-                    throw new RuntimeException("Closing quote missed: " + sb);
-                }
-                token = scanner.next();
-                sb.append(" ").append(token);
-            }
-
-            token = sb.substring(1, sb.length() - 1);
-        }
-
-        return token;
     }
 }
