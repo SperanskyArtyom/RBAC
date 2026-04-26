@@ -2,6 +2,7 @@ package io.github.speranskyartyom.rbac.cli.commands;
 
 import io.github.speranskyartyom.rbac.cli.CommandParser;
 import io.github.speranskyartyom.rbac.interfaces.functional.Command;
+import io.github.speranskyartyom.rbac.utils.ConsoleUtils;
 
 public class UtilityCommands {
     public static void registerCommands(CommandParser parser) {
@@ -60,11 +61,7 @@ public class UtilityCommands {
             }
 
             if (!forced) {
-                System.out.print("Are you sure you want to exit (y/n): ");
-                String answer = scanner.nextLine();
-
-                if (!answer.equalsIgnoreCase("y") &&
-                        !answer.equalsIgnoreCase("yes")) {
+                if (!ConsoleUtils.promptYesNo(scanner, "Are you sure you want to exit?")) {
                     System.out.println("Exit cancelled.");
                     return;
                 }

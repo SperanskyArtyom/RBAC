@@ -122,7 +122,7 @@ class UtilityCommandsTest {
         parser.parseAndExecute("exit", scanner, mockSystem);
 
         String output = outContent.toString();
-        assertTrue(output.contains("Are you sure you want to exit (y/n): "));
+        assertTrue(output.contains("Are you sure you want to exit?"));
         assertTrue(output.contains("Exit cancelled."));
     }
 
