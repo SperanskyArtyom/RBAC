@@ -3,6 +3,7 @@ package io.github.speranskyartyom.rbac.cli.commands;
 import io.github.speranskyartyom.rbac.cli.CommandParser;
 import io.github.speranskyartyom.rbac.interfaces.functional.Command;
 import io.github.speranskyartyom.rbac.reports.ReportGenerator;
+import io.github.speranskyartyom.rbac.utils.ConsoleUtils;
 
 import java.util.Arrays;
 
@@ -50,9 +51,13 @@ public class ReportCommands {
                 }
             }
 
-            if (filename == null){
-                System.out.print("Enter filename to save report or type \"Enter\" to print it on screen: ");
-                filename = scanner.nextLine();
+            if (filename == null) {
+                filename = ConsoleUtils.promptString(
+                        scanner,
+                        "Enter filename to save report " +
+                                "or type \"Enter\" to print it on screen",
+                        false
+                );
             }
 
             if (filename.isBlank()) {
