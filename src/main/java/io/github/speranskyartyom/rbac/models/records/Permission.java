@@ -31,6 +31,11 @@ public record Permission(String name, String resource, String description) {
                 name, resource, description);
     }
 
+    @Override
+    public String toString() {
+        return format();
+    }
+
     public boolean matches(String namePattern, String resourcePattern) {
         boolean nameMatch = namePattern == null || name.matches(namePattern);
         boolean resourceMatch = resourcePattern == null || resource.matches(resourcePattern);
