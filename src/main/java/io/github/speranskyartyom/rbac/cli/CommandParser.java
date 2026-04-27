@@ -2,6 +2,7 @@ package io.github.speranskyartyom.rbac.cli;
 
 import io.github.speranskyartyom.rbac.core.RBACSystem;
 import io.github.speranskyartyom.rbac.interfaces.functional.Command;
+import io.github.speranskyartyom.rbac.utils.FormatUtils;
 import io.github.speranskyartyom.rbac.utils.ValidationUtils;
 
 import java.util.*;
@@ -76,16 +77,12 @@ public class CommandParser {
     }
 
     public void printHelp() {
-        int maxLength = 0;
+        String[] headers = {"Command", "Description"};
+        List<String[]> rows = new ArrayList<>();
 
-        for (var entry : commands.entrySet()) {
-            maxLength = Math.max(maxLength, entry.getKey().length());
-        }
-
-        String format = "%-" + maxLength + "s - %s%n";
-
-        System.out.println("Commands:");
         commandDescriptions.forEach((command, description) ->
-                System.out.printf(format, command, description));
+                rows.add(new String[]{command, description}));
+
+        System.out.println(FormatUtils.formatTable(headers, rows));
     }
 }

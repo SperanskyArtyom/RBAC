@@ -4,6 +4,7 @@ import io.github.speranskyartyom.rbac.interfaces.RoleAssignment;
 import io.github.speranskyartyom.rbac.models.PermanentAssignment;
 import io.github.speranskyartyom.rbac.models.Role;
 import io.github.speranskyartyom.rbac.models.records.User;
+import io.github.speranskyartyom.rbac.utils.FormatUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -106,13 +107,14 @@ class RBACSystemTest {
         String stats = system.generateStatistics();
 
         String expected = String.format("""
-                        System statistics
+                        %s
                             Users: %d
                             Roles: %d
                             Assignments: TOTAL %d, ACTIVE %d, EXPIRED %d
                             Average number of roles per user: %.2f
                             Top roles: %s
                         """,
+                FormatUtils.formatHeader("System statistics"),
                 1,                     // users
                 3,                     // roles (Admin, Manager, Viewer)
                 1,                     // total assignments

@@ -12,6 +12,7 @@ import io.github.speranskyartyom.rbac.models.TemporaryAssignment;
 import io.github.speranskyartyom.rbac.models.records.AssignmentMetadata;
 import io.github.speranskyartyom.rbac.models.records.User;
 import io.github.speranskyartyom.rbac.utils.ConsoleUtils;
+import io.github.speranskyartyom.rbac.utils.FormatUtils;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -127,7 +128,7 @@ public class AssignmentsCommands {
 
             } else {
                 type = args[2];
-                if (!type.equals("permanent") &&     !type.equals("temporary")) {
+                if (!type.equals("permanent") && !type.equals("temporary")) {
                     System.out.println("Error: Invalid assignment type.");
                     System.out.println("Expected: permanent or temporary. Given: " + type);
                     return;
@@ -571,42 +572,20 @@ public class AssignmentsCommands {
             return;
         }
 
-        int maxUser = "Username".length();
-        int maxRole = "Role".length();
-        int maxType = "Type".length();
-        int maxStatus = "Status".length();
-        int maxDate = "Assigned at".length();
+        String[] headers = {"Username", "Role", "Type", "Status", "Assigned at"};
+        List<String[]> rows = new ArrayList<>();
 
         for (RoleAssignment assignment : assignments) {
-            maxUser = Math.max(maxUser, assignment.user().username().length());
-            maxRole = Math.max(maxRole, assignment.role().getName().length());
-            maxType = Math.max(maxType, assignment.assignmentType().length());
-            String status = assignment.isActive() ? "ACTIVE" : "INACTIVE";
-            maxStatus = Math.max(maxStatus, status.length());
-            maxDate = Math.max(maxDate, assignment.metadata().assignedAt().length());
+            String[] row = {
+                    assignment.user().username(),
+                    assignment.role().getName(),
+                    assignment.assignmentType(),
+                    assignment.isActive() ? "ACTIVE" : "INACTIVE",
+                    assignment.metadata().assignedAt()
+            };
+            rows.add(row);
         }
 
-        String format = "| %-" + maxUser +
-                "s | %-" + maxRole +
-                "s | %-" + maxType +
-                "s | %-" + maxStatus +
-                "s | %-" + maxDate + "s |%n";
-        String separator = "+-" + "-".repeat(maxUser)
-                + "-+-" + "-".repeat(maxRole)
-                + "-+-" + "-".repeat(maxType)
-                + "-+-" + "-".repeat(maxStatus)
-                + "-+-" + "-".repeat(maxDate) + "-+";
-
-        System.out.println(separator);
-        System.out.printf(format, "Username", "Role", "Type", "Status", "Assigned at");
-        System.out.println(separator);
-
-        for (RoleAssignment assignment : assignments) {
-            System.out.printf(format, assignment.user().username(), assignment.role().getName(),
-                    assignment.assignmentType(), assignment.isActive() ? "ACTIVE" : "INACTIVE",
-                    assignment.metadata().assignedAt());
-        }
-
-        System.out.println(separator);
+        System.out.println(FormatUtils.formatTable(headers, rows));
     }
 }

@@ -3,6 +3,7 @@ package io.github.speranskyartyom.rbac.cli.commands;
 import io.github.speranskyartyom.rbac.cli.CommandParser;
 import io.github.speranskyartyom.rbac.interfaces.functional.Command;
 import io.github.speranskyartyom.rbac.utils.ConsoleUtils;
+import io.github.speranskyartyom.rbac.utils.FormatUtils;
 
 public class UtilityCommands {
     public static void registerCommands(CommandParser parser) {
@@ -61,7 +62,8 @@ public class UtilityCommands {
             }
 
             if (!forced) {
-                if (!ConsoleUtils.promptYesNo(scanner, "Are you sure you want to exit?")) {
+                System.out.println(FormatUtils.formatBox("Are you sure you want to exit?"));
+                if (!ConsoleUtils.promptYesNo(scanner, "Enter answer")) {
                     System.out.println("Exit cancelled.");
                     return;
                 }

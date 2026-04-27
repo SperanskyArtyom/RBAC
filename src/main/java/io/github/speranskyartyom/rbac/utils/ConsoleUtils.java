@@ -1,5 +1,6 @@
 package io.github.speranskyartyom.rbac.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -67,27 +68,14 @@ public class ConsoleUtils {
         }
         System.out.println(ANSI_BLUE + message + ANSI_RESET);
 
-        int maxLength = 0;
+        List<String[]> rows = new ArrayList<>();
 
+        int i = 1;
         for (T option : options) {
-            maxLength = Math.max(maxLength, option.toString().length());
+            String[] row = {String.valueOf(i), FormatUtils.truncate(option.toString(), 40)};
+            rows.add(row);
         }
-
-        int maxNumberLength = String.valueOf(options.size() + 1).length();
-
-        String borderFormat = "%s" + "─".repeat(maxNumberLength) + "%s" + "─".repeat(maxLength) + "%s%n";
-        String format = "│%-" + maxNumberLength + "s│%-" + maxLength + "s│%n";
-
-        System.out.printf(borderFormat, "┌", "┬", "┐");
-        for (int i = 0; i < options.size(); i++) {
-            System.out.printf(format, i + 1, options.get(i).toString());
-
-            if (i != options.size() - 1) {
-                System.out.printf(borderFormat, "├", "┼", "┤");
-            }
-        }
-        System.out.printf(borderFormat, "└", "┴", "┘");
-
+        System.out.println(FormatUtils.formatTable(null, rows));
         int choice = promptInt(scanner, "Enter number of option", 1, options.size());
 
         return options.get(choice - 1);

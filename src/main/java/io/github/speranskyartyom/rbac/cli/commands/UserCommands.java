@@ -9,6 +9,7 @@ import io.github.speranskyartyom.rbac.managers.UserManager;
 import io.github.speranskyartyom.rbac.models.Role;
 import io.github.speranskyartyom.rbac.models.records.User;
 import io.github.speranskyartyom.rbac.utils.ConsoleUtils;
+import io.github.speranskyartyom.rbac.utils.FormatUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -53,28 +54,14 @@ public class UserCommands {
             return;
         }
 
-        int maxUser = "Username".length();
-        int maxFull = "Full Name".length();
-        int maxEmail = "Email".length();
+        String[] headers = {"Username", "Full Name", "Email"};
+        List<String[]> rows = new ArrayList<>();
 
         for (User user : users) {
-            maxUser = Math.max(maxUser, user.username().length());
-            maxFull = Math.max(maxFull, user.fullName().length());
-            maxEmail = Math.max(maxEmail, user.email().length());
+            rows.add(new String[]{user.username(), user.fullName(), user.email()});
         }
 
-        String format = "| %-" + maxUser + "s | %-" + maxFull + "s | %-" + maxEmail + "s |%n";
-        String separator = "+-" + "-".repeat(maxUser) + "-+-" + "-".repeat(maxFull) + "-+-" + "-".repeat(maxEmail) + "-+";
-
-        System.out.println(separator);
-        System.out.printf(format, "Username", "Full Name", "Email");
-        System.out.println(separator);
-
-        for (User u : users) {
-            System.out.printf(format, u.username(), u.fullName(), u.email());
-        }
-
-        System.out.println(separator);
+        System.out.println(FormatUtils.formatTable(headers, rows));
     }
 
     private static Command userListCommand() {

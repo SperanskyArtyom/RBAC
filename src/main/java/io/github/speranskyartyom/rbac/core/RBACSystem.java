@@ -10,6 +10,7 @@ import io.github.speranskyartyom.rbac.models.Role;
 import io.github.speranskyartyom.rbac.models.records.AssignmentMetadata;
 import io.github.speranskyartyom.rbac.models.records.Permission;
 import io.github.speranskyartyom.rbac.models.records.User;
+import io.github.speranskyartyom.rbac.utils.FormatUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -108,13 +109,14 @@ public class RBACSystem {
         String topRoles = String.join(", ", getTopRoles(3));
 
         return String.format("""
-                        System statistics
+                        %s
                             Users: %d
                             Roles: %d
                             Assignments: TOTAL %d, ACTIVE %d, EXPIRED %d
                             Average number of roles per user: %.2f
                             Top roles: %s
                         """,
+                FormatUtils.formatHeader("System statistics"),
                 users,
                 roles,
                 totalAssignments,

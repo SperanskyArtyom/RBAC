@@ -7,6 +7,7 @@ import io.github.speranskyartyom.rbac.models.Role;
 import io.github.speranskyartyom.rbac.models.records.Permission;
 import io.github.speranskyartyom.rbac.models.records.User;
 import io.github.speranskyartyom.rbac.utils.ConsoleUtils;
+import io.github.speranskyartyom.rbac.utils.FormatUtils;
 
 import java.util.*;
 
@@ -55,12 +56,16 @@ public class PermissionCommands {
                 return;
             }
 
-            System.out.println("User's permissions:");
+            String[] header = {"User's permissions"};
+
+            List<String[]> rows = new ArrayList<>();
             permissions.stream()
                     .sorted(Comparator.comparing(Permission::resource))
-                    .forEach(permission -> {
-                        System.out.println(permission.format());
-                    });
+                    .forEach(permission ->
+                            rows.add(new String[]{permission.format()})
+                    );
+
+            System.out.println(FormatUtils.formatTable(header, rows));
         });
     }
 

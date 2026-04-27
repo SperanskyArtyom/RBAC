@@ -9,6 +9,7 @@ import io.github.speranskyartyom.rbac.interfaces.functional.RoleFilter;
 import io.github.speranskyartyom.rbac.models.Role;
 import io.github.speranskyartyom.rbac.models.records.Permission;
 import io.github.speranskyartyom.rbac.utils.ConsoleUtils;
+import io.github.speranskyartyom.rbac.utils.FormatUtils;
 
 import java.util.*;
 
@@ -71,7 +72,13 @@ public class RolesCommands {
                 return;
             }
 
-            roles.forEach(role -> System.out.println(role.format()));
+            List<String[]> rows = new ArrayList<>();
+            roles.forEach(role -> {
+                String[] row = {role.format()};
+                rows.add(row);
+            });
+
+            System.out.println(FormatUtils.formatTable(null, rows));
         });
     }
 
@@ -470,8 +477,10 @@ public class RolesCommands {
                 return;
             }
 
-            System.out.println("Found roles:");
-            roles.forEach(role -> System.out.println(role.format()));
+            List<String[]> rows = new ArrayList<>();
+            roles.forEach(role -> rows.add(new String[]{role.format()}));
+
+            System.out.println(FormatUtils.formatTable(new String[]{"Found roles"}, rows));
         });
     }
 }
